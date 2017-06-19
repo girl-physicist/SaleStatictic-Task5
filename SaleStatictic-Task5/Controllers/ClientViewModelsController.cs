@@ -7,111 +7,110 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using SaleStatictic_Task5.Models;
-using SaleStatictic_Task5.Models.ViewModels;
 
 namespace SaleStatictic_Task5.Controllers
 {
-    public class OrderViewModelsController : Controller
+    public class ClientViewModelsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: OrderViewModels
+        // GET: ClientViewModels
         public ActionResult Index()
         {
-            return View(db.OrderViewModels.ToList());
+            return View(db.ClientViewModels.ToList());
         }
 
-        // GET: OrderViewModels/Details/5
+        // GET: ClientViewModels/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            OrderViewModel orderViewModel = db.OrderViewModels.Find(id);
-            if (orderViewModel == null)
+            ClientViewModel clientViewModel = db.ClientViewModels.Find(id);
+            if (clientViewModel == null)
             {
                 return HttpNotFound();
             }
-            return View(orderViewModel);
+            return View(clientViewModel);
         }
 
-        // GET: OrderViewModels/Create
+        // GET: ClientViewModels/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: OrderViewModels/Create
+        // POST: ClientViewModels/Create
         // Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
         // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Date,ProductId,ClientId,ManagerId")] OrderViewModel orderViewModel)
+        public ActionResult Create([Bind(Include = "Id,ClientName")] ClientViewModel clientViewModel)
         {
             if (ModelState.IsValid)
             {
-                db.OrderViewModels.Add(orderViewModel);
+                db.ClientViewModels.Add(clientViewModel);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(orderViewModel);
+            return View(clientViewModel);
         }
 
-        // GET: OrderViewModels/Edit/5
+        // GET: ClientViewModels/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            OrderViewModel orderViewModel = db.OrderViewModels.Find(id);
-            if (orderViewModel == null)
+            ClientViewModel clientViewModel = db.ClientViewModels.Find(id);
+            if (clientViewModel == null)
             {
                 return HttpNotFound();
             }
-            return View(orderViewModel);
+            return View(clientViewModel);
         }
 
-        // POST: OrderViewModels/Edit/5
+        // POST: ClientViewModels/Edit/5
         // Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
         // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Date,ProductId,ClientId,ManagerId")] OrderViewModel orderViewModel)
+        public ActionResult Edit([Bind(Include = "Id,ClientName")] ClientViewModel clientViewModel)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(orderViewModel).State = EntityState.Modified;
+                db.Entry(clientViewModel).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(orderViewModel);
+            return View(clientViewModel);
         }
 
-        // GET: OrderViewModels/Delete/5
+        // GET: ClientViewModels/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            OrderViewModel orderViewModel = db.OrderViewModels.Find(id);
-            if (orderViewModel == null)
+            ClientViewModel clientViewModel = db.ClientViewModels.Find(id);
+            if (clientViewModel == null)
             {
                 return HttpNotFound();
             }
-            return View(orderViewModel);
+            return View(clientViewModel);
         }
 
-        // POST: OrderViewModels/Delete/5
+        // POST: ClientViewModels/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            OrderViewModel orderViewModel = db.OrderViewModels.Find(id);
-            db.OrderViewModels.Remove(orderViewModel);
+            ClientViewModel clientViewModel = db.ClientViewModels.Find(id);
+            db.ClientViewModels.Remove(clientViewModel);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

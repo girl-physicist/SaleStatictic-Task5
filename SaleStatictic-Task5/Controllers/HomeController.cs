@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using AutoMapper;
 using BLL.DTO;
 using BLL.Infrastructure;
 using BLL.Interfaces;
 using SaleStatictic_Task5.Models;
+using SaleStatictic_Task5.Models.ViewModels;
 
 namespace SaleStatictic_Task5.Controllers
 {
@@ -18,8 +20,27 @@ namespace SaleStatictic_Task5.Controllers
         {
             _orderService = serv;
         }
+        [Authorize]
         public ActionResult Index()
         {
+            //if (User.Identity.IsAuthenticated)
+            //{
+            //    switch (Roles.GetRolesForUser(User.Identity.Name).First())
+            //    {
+            //        case "admin":
+            //            return RedirectToAction("Index", "OrderViewModels");
+            //        case "user":
+            //            return RedirectToAction("Index", "ClientViewModels");
+            //    }
+            //}
+            //else
+            //    return RedirectToAction("Login", "Account");
+
+            //return RedirectToAction("Login", "Account");
+
+
+
+
             IEnumerable<ProductDTO> productDtos = _orderService.GetProducts();
             Mapper.Initialize(cfg => cfg.CreateMap<ProductDTO, ProductViewModel>());
             var products = Mapper.Map<IEnumerable<ProductDTO>, List<ProductViewModel>>(productDtos);
@@ -63,6 +84,7 @@ namespace SaleStatictic_Task5.Controllers
             _orderService.Dispose();
             base.Dispose(disposing);
         }
+        [Authorize(Roles = "admin")]
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";

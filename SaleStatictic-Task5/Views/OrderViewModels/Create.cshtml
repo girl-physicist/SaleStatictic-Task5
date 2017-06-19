@@ -27,6 +27,11 @@
             @Html.LabelFor(model => model.ProductId, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.ProductId, new { htmlAttributes = new { @class = "form-control" } })
+                <select name="Product">
+                    <option disabled>Select Product</option>
+                    <option value="SaleStatictic_Task5.Models.ProductViewModel">SaleStatictic_Task5.Models.ProductViewModel</option>
+                 
+                </select>
                 @Html.ValidationMessageFor(model => model.ProductId, "", new { @class = "text-danger" })
             </div>
         </div>

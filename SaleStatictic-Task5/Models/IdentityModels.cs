@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using SaleStatictic_Task5.Models.ViewModels;
 
 namespace SaleStatictic_Task5.Models
 {
@@ -31,5 +32,11 @@ namespace SaleStatictic_Task5.Models
         }
 
         public System.Data.Entity.DbSet<SaleStatictic_Task5.Models.OrderViewModel> OrderViewModels { get; set; }
+
+        public System.Data.Entity.DbSet<ManagerViewModel> ManagerViewModels { get; set; }
+
+        public System.Data.Entity.DbSet<SaleStatictic_Task5.Models.ClientViewModel> ClientViewModels { get; set; }
+
+        public System.Data.Entity.DbSet<ProductViewModel> ProductViewModels { get; set; }
     }
 }

@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using SaleStatictic_Task5.Models;
+using SaleStatictic_Task5.Models.Roles;
 
 namespace SaleStatictic_Task5
 {
@@ -12,6 +15,7 @@ namespace SaleStatictic_Task5
     {
         protected void Application_Start()
         {
+            Database.SetInitializer<ApplicationDbContext>(new AppDbInitializer());
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
