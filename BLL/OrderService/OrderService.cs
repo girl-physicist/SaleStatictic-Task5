@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
 using BLL.DTO;
 using BLL.Infrastructure;
@@ -18,6 +19,7 @@ namespace BLL.OrderService
             DataBase = unitOfWorkow;
         }
 
+
         public ManagerDTO GetManager(int? id)
         {
             if (id == null)
@@ -30,6 +32,40 @@ namespace BLL.OrderService
             return Mapper.Map<Manager, ManagerDTO>(manager);
         }
 
+        public void AddManager(ManagerDTO managerDto)
+        {
+          Mapper.Initialize(cfg => cfg.CreateMap<ManagerDTO, Manager>());
+          var  manager= Mapper.Map<ManagerDTO, Manager>(managerDto);
+            DataBase.Managers.Create(manager);
+            DataBase.Save();
+        }
+        public void UpdateManager(ManagerDTO managerDto)
+        {
+            Mapper.Initialize(cfg => cfg.CreateMap<ManagerDTO, Manager>());
+            var manager = Mapper.Map<ManagerDTO, Manager>(managerDto);
+            DataBase.Managers.Update(manager);
+            DataBase.Save();
+        }
+
+        public void RemoveManager(int? id)
+        {
+            if (id == null)
+                throw new ValidationException("Не установлено id менеджера", "");
+            var manager = DataBase.Managers.Get(id.Value);
+            if (manager == null)
+                throw new ValidationException("Не найден менеджер", "");
+            Mapper.Initialize(cfg => cfg.CreateMap<Manager, ManagerDTO>());
+            var managerDto= Mapper.Map<Manager, ManagerDTO>(manager);
+            DataBase.Managers.Delete(managerDto.Id);
+            DataBase.Save();
+        }
+        public void RemoveManager(ManagerDTO managerDto)
+        {
+            Mapper.Initialize(cfg => cfg.CreateMap<ManagerDTO, Manager>());
+            var manager = Mapper.Map<ManagerDTO, Manager>(managerDto);
+            DataBase.Managers.Delete(manager.Id);
+            DataBase.Save();
+        }
         public ProductDTO GetProduct(int? id)
         {
             if (id == null)
@@ -50,7 +86,6 @@ namespace BLL.OrderService
         public void MakeOrder(OrderDTO orderDto)
         {
             Product product = DataBase.Products.Get(orderDto.ProductId);
-
             if (product == null)
                 throw new ValidationException("Товар не найден!", "");
             Order order = new Order
@@ -76,6 +111,26 @@ namespace BLL.OrderService
 
             return Mapper.Map<IEnumerable<Order>, List<OrderDTO>>(orders);
         }
+
+        public IEnumerable<OrderDTO> GetOrdersByManagerName(string managerName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<OrderDTO> GetOrdersByClientName(string clientName)
+        {
+            var client = DataBase.Clients.GetAll().FirstOrDefault(x => x.ClientName.Equals(clientName));
+            if (client == null)
+            {
+                throw new ValidationException("Client with this name not found", "");
+            }
+            var orders = DataBase.Orders.Find(x => x.ClientId == client.Id);
+            if (orders == null)
+                throw new ValidationException("Заказы не найдены", "");
+            Mapper.Initialize(cfg => cfg.CreateMap<Order, OrderDTO>());
+            return Mapper.Map<IEnumerable<Order>, List<OrderDTO>>(orders);
+        }
+
         public IEnumerable<OrderDTO> GetOrdersByManager(int? id)
         {
             if (id == null)
@@ -117,6 +172,8 @@ namespace BLL.OrderService
             Mapper.Initialize(cfg => cfg.CreateMap<Manager, ManagerDTO>());
             return Mapper.Map<IEnumerable<Manager>, List<ManagerDTO>>(DataBase.Managers.GetAll());
         }
+
+        
     }
 }
 

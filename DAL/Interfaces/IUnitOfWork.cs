@@ -3,7 +3,7 @@ using DAL.Entities;
 
 namespace DAL.Interfaces
 {
-   public interface IUnitOfWork : IDisposable
+   public interface IUnitOfWork : IDisposable 
     {
         IRepository<Client> Clients { get; }
         IRepository<Manager> Managers { get; }

@@ -47,6 +47,7 @@ namespace SaleStatictic_Task5.Controllers
             ViewBag.Products = products;
             return View();
         }
+
         [HttpGet]
         public ActionResult MakeOrder(int? id)
         {
@@ -84,6 +85,32 @@ namespace SaleStatictic_Task5.Controllers
             _orderService.Dispose();
             base.Dispose(disposing);
         }
+        [HttpPost]
+        public ActionResult ProductSearch(string name)
+        {
+           var allProduct = _orderService.GetProducts().Where(x => x.ProductName.Contains(name)).ToList();
+            Mapper.Initialize(cfg => cfg.CreateMap<ProductDTO, ProductViewModel>());
+            var products = Mapper.Map<IEnumerable<ProductDTO>, List<ProductViewModel>>(allProduct);
+            if (products.Count <= 0)
+            {
+                return HttpNotFound();
+            }
+            return PartialView(products);
+        }
+        [HttpPost]
+        public ActionResult SearchOrderByClient(string clientName)
+        {
+            IEnumerable<OrderDTO> orderDtos = _orderService.GetOrdersByClientName(clientName);
+            Mapper.Initialize(cfg => cfg.CreateMap<OrderDTO, OrderViewModel>());
+            var orders = Mapper.Map<IEnumerable<OrderDTO>, List<OrderViewModel>>(orderDtos);
+            if (orders.Count <= 0)
+            {
+                return HttpNotFound();
+            }
+            return PartialView(orders);
+        }
+      
+
         [Authorize(Roles = "admin")]
         public ActionResult About()
         {

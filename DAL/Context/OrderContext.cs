@@ -19,7 +19,7 @@ namespace DAL.Context
             : base(connectionString)
         {
 
-            Database.Initialize(true);
+         //   Database.Initialize(true);
         }
 
         

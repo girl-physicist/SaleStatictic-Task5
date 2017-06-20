@@ -6,19 +6,35 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using AutoMapper;
+using BLL.DTO;
 using SaleStatictic_Task5.Models;
 using SaleStatictic_Task5.Models.ViewModels;
+using BLL.Interfaces;
 
 namespace SaleStatictic_Task5.Controllers
 {
     public class ManagerViewModelsController : Controller
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
-
+        readonly IOrderService _orderService;
+        public ManagerViewModelsController(IOrderService serv)
+        {
+            _orderService = serv;
+        }
+      
+        public IEnumerable<ManagerViewModel> GetAllManagerViewModels()
+        {
+            var managersDTO = _orderService.GetManagers();
+            Mapper.Initialize(cfg => cfg.CreateMap<ManagerDTO, ManagerViewModel>());
+            var managers = Mapper.Map<IEnumerable<ManagerDTO>, List<ManagerViewModel>>(managersDTO);
+            return managers;
+        }
         // GET: ManagerViewModels
         public ActionResult Index()
         {
-            return View(db.ManagerViewModels.ToList());
+            var managers = GetAllManagerViewModels();
+            ViewBag.Managers = managers;
+            return View(managers);
         }
 
         // GET: ManagerViewModels/Details/5
@@ -28,7 +44,7 @@ namespace SaleStatictic_Task5.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ManagerViewModel managerViewModel = db.ManagerViewModels.Find(id);
+           ManagerViewModel managerViewModel =GetAllManagerViewModels().FirstOrDefault(x=>x.Id.Equals(id));
             if (managerViewModel == null)
             {
                 return HttpNotFound();
@@ -51,8 +67,9 @@ namespace SaleStatictic_Task5.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.ManagerViewModels.Add(managerViewModel);
-                db.SaveChanges();
+                Mapper.Initialize(cfg => cfg.CreateMap<ManagerViewModel, ManagerDTO>());
+                var manager = Mapper.Map<ManagerViewModel, ManagerDTO>(managerViewModel);
+                _orderService.AddManager(manager);
                 return RedirectToAction("Index");
             }
 
@@ -66,7 +83,7 @@ namespace SaleStatictic_Task5.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ManagerViewModel managerViewModel = db.ManagerViewModels.Find(id);
+            ManagerViewModel managerViewModel = GetAllManagerViewModels().FirstOrDefault(x => x.Id.Equals(id));
             if (managerViewModel == null)
             {
                 return HttpNotFound();
@@ -83,8 +100,9 @@ namespace SaleStatictic_Task5.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(managerViewModel).State = EntityState.Modified;
-                db.SaveChanges();
+                Mapper.Initialize(cfg => cfg.CreateMap<ManagerViewModel, ManagerDTO>());
+                var manager = Mapper.Map<ManagerViewModel, ManagerDTO>(managerViewModel);
+                _orderService.UpdateManager(manager);
                 return RedirectToAction("Index");
             }
             return View(managerViewModel);
@@ -97,30 +115,29 @@ namespace SaleStatictic_Task5.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ManagerViewModel managerViewModel = db.ManagerViewModels.Find(id);
+            ManagerViewModel managerViewModel = GetAllManagerViewModels().FirstOrDefault(x => x.Id.Equals(id));
             if (managerViewModel == null)
             {
                 return HttpNotFound();
             }
             return View(managerViewModel);
         }
-
         // POST: ManagerViewModels/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            ManagerViewModel managerViewModel = db.ManagerViewModels.Find(id);
-            db.ManagerViewModels.Remove(managerViewModel);
-            db.SaveChanges();
+            ManagerViewModel managerViewModel = GetAllManagerViewModels().FirstOrDefault(x => x.Id.Equals(id));
+            Mapper.Initialize(cfg => cfg.CreateMap<ManagerViewModel, ManagerDTO>());
+            var manager = Mapper.Map<ManagerViewModel, ManagerDTO>(managerViewModel);
+           _orderService.RemoveManager(manager);
             return RedirectToAction("Index");
         }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                db.Dispose();
+                _orderService.Dispose();
             }
             base.Dispose(disposing);
         }
