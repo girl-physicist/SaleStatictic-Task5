@@ -205,9 +205,12 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\ClientViewModelsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ManagerViewModelsController.cs" />
+    <Compile Include="Controllers\OrderViewModelsController.cs" />
+    <Compile Include="Controllers\ProductViewModelsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -341,6 +344,21 @@
     <Content Include="Views\Home\Products.cshtml" />
     <Content Include="Views\Home\Clients.cshtml" />
     <Content Include="Views\Home\Managers.cshtml" />
+    <Content Include="Views\OrderViewModels\Create.cshtml" />
+    <Content Include="Views\OrderViewModels\Delete.cshtml" />
+    <Content Include="Views\OrderViewModels\Details.cshtml" />
+    <Content Include="Views\OrderViewModels\Edit.cshtml" />
+    <Content Include="Views\OrderViewModels\Index.cshtml" />
+    <Content Include="Views\ClientViewModels\Create.cshtml" />
+    <Content Include="Views\ClientViewModels\Delete.cshtml" />
+    <Content Include="Views\ClientViewModels\Details.cshtml" />
+    <Content Include="Views\ClientViewModels\Edit.cshtml" />
+    <Content Include="Views\ClientViewModels\Index.cshtml" />
+    <Content Include="Views\ProductViewModels\Create.cshtml" />
+    <Content Include="Views\ProductViewModels\Delete.cshtml" />
+    <Content Include="Views\ProductViewModels\Details.cshtml" />
+    <Content Include="Views\ProductViewModels\Edit.cshtml" />
+    <Content Include="Views\ProductViewModels\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

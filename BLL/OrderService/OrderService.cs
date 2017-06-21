@@ -19,13 +19,8 @@ namespace BLL.OrderService
             Product product = DataBase.Products.Get(orderDto.ProductId);
             if (product == null)
                 throw new ValidationException("Товар не найден!", "");
-            Order order = new Order
-            {
-                ClientId = orderDto.ClientId,
-                OrderDate =  DateTime.Now,
-                ManagerId = orderDto.ManagerId,
-                ProductId = product.Id
-            };
+            Mapper.Initialize(cfg => cfg.CreateMap<OrderDTO, Order>());
+            var order = Mapper.Map<OrderDTO, Order>(orderDto);
             DataBase.Orders.Create(order);
             DataBase.Save();
         }

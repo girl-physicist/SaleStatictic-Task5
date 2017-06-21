@@ -4,14 +4,39 @@
 <h2>@ViewBag.Title.</h2>
 <h3>@ViewBag.Message</h3>
 
-<address>
-    One Microsoft Way<br />
-    Redmond, WA 98052-6399<br />
-    <abbr title="Phone">P:</abbr>
-    425.555.0100
-</address>
+<div id="chart_div">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
 
-<address>
-    <strong>Support:</strong>   <a href="mailto:Support@example.com">Support@example.com</a><br />
-    <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-</address>
+
+    function drawChart() {
+
+        var options = {
+            'title': 'Products',
+            'width': 400,
+            'height': 300
+        };
+
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'ProductName');
+        data.addColumn('number', 'ProductCost');
+
+        $.getJSON('@Url.Action("GetProducts", "Home")', null,
+            function (result) {
+                if (result.Products.length) {
+                    $.each(result.Products, function (index, c) {
+                        data.addRow(
+                            [c.Name, c.Value]
+                        );
+                    });
+                    // Отрисовка диаграммы
+                    var chart = new google.visualization.PieChart(
+                        document.getElementById('chart_div'));
+                    chart.draw(data, options);
+                };
+            });
+    }
+</script>
+</div>

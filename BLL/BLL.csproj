@@ -59,20 +59,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DTO\ClientDTO.cs" />
-    <Compile Include="DTO\DTO.cs" />
     <Compile Include="DTO\ManagerDTO.cs" />
     <Compile Include="DTO\OrderDTO.cs" />
     <Compile Include="DTO\ProductDTO.cs" />
     <Compile Include="Infrastructure\ServiceModule.cs" />
     <Compile Include="Infrastructure\ValidationException.cs" />
     <Compile Include="Interfaces\IClientService.cs" />
-    <Compile Include="Interfaces\IDTO.cs" />
     <Compile Include="Interfaces\IOrderService.cs" />
     <Compile Include="Interfaces\IManagerService.cs" />
     <Compile Include="Interfaces\IProductService.cs" />
     <Compile Include="Interfaces\IService.cs" />
     <Compile Include="OrderService\ClientServise.cs" />
-    <Compile Include="OrderService\HelperMapping.cs" />
     <Compile Include="OrderService\ManagerService.cs" />
     <Compile Include="OrderService\OrderService.cs" />
     <Compile Include="OrderService\ProductServise.cs" />

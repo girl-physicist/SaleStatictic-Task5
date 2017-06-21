@@ -1,7 +1,8 @@
 ﻿namespace BLL.DTO
 {
-   public class ClientDTO:DTO
+   public class ClientDTO
     {
-      public string ClientName { get; set; }
+        public int Id { get; set; }
+        public string ClientName { get; set; }
     }
 }

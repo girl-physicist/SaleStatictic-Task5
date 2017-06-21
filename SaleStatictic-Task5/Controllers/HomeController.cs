@@ -15,7 +15,8 @@ namespace SaleStatictic_Task5.Controllers
 {
     public class HomeController : Controller
     {
-       private readonly IOrderService _orderService;
+        private ApplicationDbContext _dbContext = new ApplicationDbContext();
+        private readonly IOrderService _orderService;
         private readonly IProductService _productService;
         private readonly IClientService _clientService;
         private readonly IManagerService _managerService;
@@ -25,7 +26,7 @@ namespace SaleStatictic_Task5.Controllers
             _managerService = managerService;
             _clientService = clientService;
             _productService = productService;
-           }
+        }
         //[Authorize]
         public ActionResult Index()
         {
@@ -43,7 +44,14 @@ namespace SaleStatictic_Task5.Controllers
             var managers = Mapper.Map<IEnumerable<ManagerDTO>, List<ManagerViewModel>>(managerDtos);
             return PartialView(managers);
         }
+        public JsonResult GetProducts()
+        {
+            IEnumerable<ProductDTO> productDtos = _productService.GetProducts();
+            Mapper.Initialize(cfg => cfg.CreateMap<ProductDTO, ProductViewModel>());
+            var result = Mapper.Map<IEnumerable<ProductDTO>, List<ProductViewModel>>(productDtos);
 
+            return Json(new { Products = result }, JsonRequestBehavior.AllowGet);
+        }
         public ActionResult Clients()
         {
             IEnumerable<ClientDTO> managerDtos = _clientService.GetClients();
@@ -65,23 +73,13 @@ namespace SaleStatictic_Task5.Controllers
             var orders = Mapper.Map<IEnumerable<OrderDTO>, List<OrderViewModel>>(orderDtos);
             return PartialView(orders);
         }
-       
+
         [HttpGet]
-        public ActionResult MakeOrder(int? id)
+        public ActionResult MakeOrder()
         {
-            try
-            {
-                ProductDTO product = _productService.GetProduct(id);
-                Mapper.Initialize(cfg => cfg.CreateMap<ProductDTO, OrderViewModel>()
-                    .ForMember("ProductId", opt => opt.MapFrom(src => src.Id)));
-                var order = Mapper.Map<ProductDTO, OrderViewModel>(product);
-                return View(order);
-            }
-            catch (ValidationException ex)
-            {
-                return Content(ex.Message);
-            }
+            return PartialView();
         }
+
         [HttpPost]
         public ActionResult MakeOrder(OrderViewModel order)
         {
@@ -100,6 +98,7 @@ namespace SaleStatictic_Task5.Controllers
         }
         protected override void Dispose(bool disposing)
         {
+            _dbContext.Dispose();
             _orderService.Dispose();
             base.Dispose(disposing);
         }
@@ -107,7 +106,7 @@ namespace SaleStatictic_Task5.Controllers
         [HttpPost]
         public ActionResult ProductSearch(string name)
         {
-           var allProduct = _productService.GetProducts().Where(x => x.ProductName.Contains(name)).ToList();
+            var allProduct = _productService.GetProducts().Where(x => x.ProductName.Contains(name)).ToList();
             Mapper.Initialize(cfg => cfg.CreateMap<ProductDTO, ProductViewModel>());
             var products = Mapper.Map<IEnumerable<ProductDTO>, List<ProductViewModel>>(allProduct);
             if (products.Count <= 0)
