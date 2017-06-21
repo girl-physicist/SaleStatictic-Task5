@@ -1,0 +1,15 @@
+﻿@model System.Collections.Generic.List<SaleStatictic_Task5.Models.ProductViewModel>
+
+<div id="products">
+    <table class="table table-striped">
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.ProductName</td>
+                <td>@item.ProductCost</td>
+            </tr>
+        }
+    </table>
+
+</div>

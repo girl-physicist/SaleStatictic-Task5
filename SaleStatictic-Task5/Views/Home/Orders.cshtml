@@ -1,0 +1,17 @@
+﻿@model System.Collections.Generic.List<SaleStatictic_Task5.Models.OrderViewModel>
+
+<div id="orders">
+    <table class="table table-striped">
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Date</td>
+                <td>@item.ClientId</td>
+                <td>@item.ManagerId</td>
+                <td>@item.ProductId</td>
+            </tr>
+        }
+    </table>
+
+</div>

@@ -22,7 +22,8 @@ namespace DAL.Repositories
 
         public void Delete(int id)
         {
-            T item = Db.Set<T>().Find(id);
+            //T item = Db.Set<T>().Find(id);
+            T item =Get(id);
             if (item != null)
                 Db.Set<T>().Remove(item);
         }
@@ -30,7 +31,6 @@ namespace DAL.Repositories
         public IEnumerable<T> Find(Func<T, bool> predicate)
         {
             return GetAll().Where(predicate).ToList();
-            //_db.Set<T>().Where(predicate).ToList();
         }
 
         public T Get(int id)

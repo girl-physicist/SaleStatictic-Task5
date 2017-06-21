@@ -1,8 +1,7 @@
 ﻿namespace BLL.DTO
 {
-    public class ManagerDTO
+    public class ManagerDTO : DTO
     {
-        public int Id { get; set; }
         public string ManagerName { get; set; }
     }
 }

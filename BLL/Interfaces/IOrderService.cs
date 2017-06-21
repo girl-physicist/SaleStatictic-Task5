@@ -3,21 +3,14 @@ using BLL.DTO;
 
 namespace BLL.Interfaces
 {
-   public interface IOrderService
+   public interface IOrderService:IService
     {
         void MakeOrder(OrderDTO orderDto);
-        void AddManager(ManagerDTO managerDto);
-        void UpdateManager(ManagerDTO managerDto);
-        void RemoveManager(ManagerDTO managerDto);
-        ProductDTO GetProduct(int? id);
-        ClientDTO GetClient(int? id);
-        ManagerDTO GetManager(int? id);
-        IEnumerable<ProductDTO> GetProducts();
-        IEnumerable<ClientDTO> GetClients();
-        IEnumerable<ManagerDTO> GetManagers();
+        void DeleteOrder(OrderDTO orderDto);
+        OrderDTO GetOrder(int? id);
+        IEnumerable<OrderDTO> GetAllOrders();
+        IEnumerable<OrderDTO> GetOrdersByManager(int? managerId);
+        IEnumerable<OrderDTO> GetOrdersByProduct(int? productId);
         IEnumerable<OrderDTO> GetOrdersByClient(int? clientId);
-        IEnumerable<OrderDTO> GetOrdersByManagerName(string managerName);
-        IEnumerable<OrderDTO> GetOrdersByClientName(string clientName);
-        void Dispose();
     }
 }

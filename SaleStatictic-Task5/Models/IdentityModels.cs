@@ -33,7 +33,7 @@ namespace SaleStatictic_Task5.Models
 
         public System.Data.Entity.DbSet<SaleStatictic_Task5.Models.OrderViewModel> OrderViewModels { get; set; }
 
-        public System.Data.Entity.DbSet<ManagerViewModel> ManagerViewModels { get; set; }
+       // public System.Data.Entity.DbSet<ManagerViewModel> ManagerViewModels { get; set; }
 
         public System.Data.Entity.DbSet<SaleStatictic_Task5.Models.ClientViewModel> ClientViewModels { get; set; }
 

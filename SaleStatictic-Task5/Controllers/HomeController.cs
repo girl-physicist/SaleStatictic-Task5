@@ -15,45 +15,63 @@ namespace SaleStatictic_Task5.Controllers
 {
     public class HomeController : Controller
     {
-        readonly IOrderService _orderService;
-        public HomeController(IOrderService serv)
+       private readonly IOrderService _orderService;
+        private readonly IProductService _productService;
+        private readonly IClientService _clientService;
+        private readonly IManagerService _managerService;
+        public HomeController(IOrderService orderService, IManagerService managerService, IClientService clientService, IProductService productService)
         {
-            _orderService = serv;
-        }
-        [Authorize]
+            _orderService = orderService;
+            _managerService = managerService;
+            _clientService = clientService;
+            _productService = productService;
+           }
+        //[Authorize]
         public ActionResult Index()
         {
-            //if (User.Identity.IsAuthenticated)
-            //{
-            //    switch (Roles.GetRolesForUser(User.Identity.Name).First())
-            //    {
-            //        case "admin":
-            //            return RedirectToAction("Index", "OrderViewModels");
-            //        case "user":
-            //            return RedirectToAction("Index", "ClientViewModels");
-            //    }
-            //}
-            //else
-            //    return RedirectToAction("Login", "Account");
-
-            //return RedirectToAction("Login", "Account");
-
-
-
-
-            IEnumerable<ProductDTO> productDtos = _orderService.GetProducts();
+            IEnumerable<ProductDTO> productDtos = _productService.GetProducts();
             Mapper.Initialize(cfg => cfg.CreateMap<ProductDTO, ProductViewModel>());
             var products = Mapper.Map<IEnumerable<ProductDTO>, List<ProductViewModel>>(productDtos);
             ViewBag.Products = products;
             return View();
         }
 
+        public ActionResult Managers()
+        {
+            IEnumerable<ManagerDTO> managerDtos = _managerService.GetManagers();
+            Mapper.Initialize(cfg => cfg.CreateMap<ManagerDTO, ManagerViewModel>());
+            var managers = Mapper.Map<IEnumerable<ManagerDTO>, List<ManagerViewModel>>(managerDtos);
+            return PartialView(managers);
+        }
+
+        public ActionResult Clients()
+        {
+            IEnumerable<ClientDTO> managerDtos = _clientService.GetClients();
+            Mapper.Initialize(cfg => cfg.CreateMap<ClientDTO, ClientViewModel>());
+            var clients = Mapper.Map<IEnumerable<ClientDTO>, List<ClientViewModel>>(managerDtos);
+            return PartialView(clients);
+        }
+        public ActionResult Products()
+        {
+            IEnumerable<ProductDTO> productDtos = _productService.GetProducts();
+            Mapper.Initialize(cfg => cfg.CreateMap<ProductDTO, ProductViewModel>());
+            var products = Mapper.Map<IEnumerable<ProductDTO>, List<ProductViewModel>>(productDtos);
+            return PartialView(products);
+        }
+        public ActionResult Orders()
+        {
+            IEnumerable<OrderDTO> orderDtos = _orderService.GetAllOrders();
+            Mapper.Initialize(cfg => cfg.CreateMap<OrderDTO, OrderViewModel>());
+            var orders = Mapper.Map<IEnumerable<OrderDTO>, List<OrderViewModel>>(orderDtos);
+            return PartialView(orders);
+        }
+       
         [HttpGet]
         public ActionResult MakeOrder(int? id)
         {
             try
             {
-                ProductDTO product = _orderService.GetProduct(id);
+                ProductDTO product = _productService.GetProduct(id);
                 Mapper.Initialize(cfg => cfg.CreateMap<ProductDTO, OrderViewModel>()
                     .ForMember("ProductId", opt => opt.MapFrom(src => src.Id)));
                 var order = Mapper.Map<ProductDTO, OrderViewModel>(product);
@@ -85,10 +103,11 @@ namespace SaleStatictic_Task5.Controllers
             _orderService.Dispose();
             base.Dispose(disposing);
         }
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public ActionResult ProductSearch(string name)
         {
-           var allProduct = _orderService.GetProducts().Where(x => x.ProductName.Contains(name)).ToList();
+           var allProduct = _productService.GetProducts().Where(x => x.ProductName.Contains(name)).ToList();
             Mapper.Initialize(cfg => cfg.CreateMap<ProductDTO, ProductViewModel>());
             var products = Mapper.Map<IEnumerable<ProductDTO>, List<ProductViewModel>>(allProduct);
             if (products.Count <= 0)
@@ -97,20 +116,6 @@ namespace SaleStatictic_Task5.Controllers
             }
             return PartialView(products);
         }
-        [HttpPost]
-        public ActionResult SearchOrderByClient(string clientName)
-        {
-            IEnumerable<OrderDTO> orderDtos = _orderService.GetOrdersByClientName(clientName);
-            Mapper.Initialize(cfg => cfg.CreateMap<OrderDTO, OrderViewModel>());
-            var orders = Mapper.Map<IEnumerable<OrderDTO>, List<OrderViewModel>>(orderDtos);
-            if (orders.Count <= 0)
-            {
-                return HttpNotFound();
-            }
-            return PartialView(orders);
-        }
-      
-
         [Authorize(Roles = "admin")]
         public ActionResult About()
         {

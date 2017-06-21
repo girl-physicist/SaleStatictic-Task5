@@ -16,15 +16,15 @@ namespace SaleStatictic_Task5.Controllers
 {
     public class ManagerViewModelsController : Controller
     {
-        readonly IOrderService _orderService;
-        public ManagerViewModelsController(IOrderService serv)
+        readonly IManagerService _managerService;
+        public ManagerViewModelsController(IManagerService serv) 
         {
-            _orderService = serv;
+            _managerService = serv;
         }
       
         public IEnumerable<ManagerViewModel> GetAllManagerViewModels()
         {
-            var managersDTO = _orderService.GetManagers();
+            var managersDTO =_managerService .GetManagers();
             Mapper.Initialize(cfg => cfg.CreateMap<ManagerDTO, ManagerViewModel>());
             var managers = Mapper.Map<IEnumerable<ManagerDTO>, List<ManagerViewModel>>(managersDTO);
             return managers;
@@ -69,7 +69,7 @@ namespace SaleStatictic_Task5.Controllers
             {
                 Mapper.Initialize(cfg => cfg.CreateMap<ManagerViewModel, ManagerDTO>());
                 var manager = Mapper.Map<ManagerViewModel, ManagerDTO>(managerViewModel);
-                _orderService.AddManager(manager);
+                _managerService.AddManager(manager);
                 return RedirectToAction("Index");
             }
 
@@ -102,7 +102,7 @@ namespace SaleStatictic_Task5.Controllers
             {
                 Mapper.Initialize(cfg => cfg.CreateMap<ManagerViewModel, ManagerDTO>());
                 var manager = Mapper.Map<ManagerViewModel, ManagerDTO>(managerViewModel);
-                _orderService.UpdateManager(manager);
+                _managerService.UpdateManager(manager);
                 return RedirectToAction("Index");
             }
             return View(managerViewModel);
@@ -130,14 +130,14 @@ namespace SaleStatictic_Task5.Controllers
             ManagerViewModel managerViewModel = GetAllManagerViewModels().FirstOrDefault(x => x.Id.Equals(id));
             Mapper.Initialize(cfg => cfg.CreateMap<ManagerViewModel, ManagerDTO>());
             var manager = Mapper.Map<ManagerViewModel, ManagerDTO>(managerViewModel);
-           _orderService.RemoveManager(manager);
+           _managerService.RemoveManager(manager);
             return RedirectToAction("Index");
         }
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                _orderService.Dispose();
+                _managerService.Dispose();
             }
             base.Dispose(disposing);
         }

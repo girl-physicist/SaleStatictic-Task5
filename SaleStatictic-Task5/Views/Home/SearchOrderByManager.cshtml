@@ -1,6 +1,6 @@
 ﻿@model System.Collections.Generic.List<SaleStatictic_Task5.Models.OrderViewModel>
 
-<div id="searchresults">
+<div id="searchresultsbymanager">
     <h3>Product Name : @Model.First().ProductId</h3>
     <ul>
         @foreach (var item in Model)
@@ -8,6 +8,8 @@
             <li>@item.Id</li>
             <li>@item.Date</li>
             <li>@item.ClientId</li>
+            <li>@item.ManagerId</li>
+            <li>@item.ProductId</li>
         }
     </ul>
 </div>

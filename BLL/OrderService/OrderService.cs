@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using AutoMapper;
 using BLL.DTO;
 using BLL.Infrastructure;
@@ -10,79 +9,11 @@ using DAL.Interfaces;
 
 namespace BLL.OrderService
 {
-    public class OrderService : IOrderService
+    public class OrderService :Service,IOrderService 
     {
-        private IUnitOfWork DataBase { get; set; }
-
-        public OrderService(IUnitOfWork unitOfWorkow)
+        public OrderService(IUnitOfWork unitOfWorkow) : base(unitOfWorkow)
         {
-            DataBase = unitOfWorkow;
         }
-
-
-        public ManagerDTO GetManager(int? id)
-        {
-            if (id == null)
-                throw new ValidationException("Не установлено id менеджера", "");
-            var manager = DataBase.Managers.Get(id.Value);
-            if (manager == null)
-                throw new ValidationException("Не найден менеджер", "");
-            Mapper.Initialize(cfg => cfg.CreateMap<Manager, ManagerDTO>());
-
-            return Mapper.Map<Manager, ManagerDTO>(manager);
-        }
-
-        public void AddManager(ManagerDTO managerDto)
-        {
-          Mapper.Initialize(cfg => cfg.CreateMap<ManagerDTO, Manager>());
-          var  manager= Mapper.Map<ManagerDTO, Manager>(managerDto);
-            DataBase.Managers.Create(manager);
-            DataBase.Save();
-        }
-        public void UpdateManager(ManagerDTO managerDto)
-        {
-            Mapper.Initialize(cfg => cfg.CreateMap<ManagerDTO, Manager>());
-            var manager = Mapper.Map<ManagerDTO, Manager>(managerDto);
-            DataBase.Managers.Update(manager);
-            DataBase.Save();
-        }
-
-        public void RemoveManager(int? id)
-        {
-            if (id == null)
-                throw new ValidationException("Не установлено id менеджера", "");
-            var manager = DataBase.Managers.Get(id.Value);
-            if (manager == null)
-                throw new ValidationException("Не найден менеджер", "");
-            Mapper.Initialize(cfg => cfg.CreateMap<Manager, ManagerDTO>());
-            var managerDto= Mapper.Map<Manager, ManagerDTO>(manager);
-            DataBase.Managers.Delete(managerDto.Id);
-            DataBase.Save();
-        }
-        public void RemoveManager(ManagerDTO managerDto)
-        {
-            Mapper.Initialize(cfg => cfg.CreateMap<ManagerDTO, Manager>());
-            var manager = Mapper.Map<ManagerDTO, Manager>(managerDto);
-            DataBase.Managers.Delete(manager.Id);
-            DataBase.Save();
-        }
-        public ProductDTO GetProduct(int? id)
-        {
-            if (id == null)
-                throw new ValidationException("Не установлено id товара", "");
-            var product = DataBase.Products.Get(id.Value);
-            if (product == null)
-                throw new ValidationException("Товар не найден", "");
-            Mapper.Initialize(cfg => cfg.CreateMap<Product, ProductDTO>());
-            return Mapper.Map<Product, ProductDTO>(product);
-        }
-
-        public IEnumerable<ProductDTO> GetProducts()
-        {
-            Mapper.Initialize(cfg => cfg.CreateMap<Product, ProductDTO>());
-            return Mapper.Map<IEnumerable<Product>, List<ProductDTO>>(DataBase.Products.GetAll());
-        }
-
         public void MakeOrder(OrderDTO orderDto)
         {
             Product product = DataBase.Products.Get(orderDto.ProductId);
@@ -93,10 +24,34 @@ namespace BLL.OrderService
                 ClientId = orderDto.ClientId,
                 OrderDate =  DateTime.Now,
                 ManagerId = orderDto.ManagerId,
-                ProductId = product.Id,
+                ProductId = product.Id
             };
             DataBase.Orders.Create(order);
             DataBase.Save();
+        }
+        public void DeleteOrder(OrderDTO orderDto)
+        {
+            Mapper.Initialize(cfg => cfg.CreateMap<OrderDTO, Order>());
+            var order = Mapper.Map<OrderDTO, Order>(orderDto);
+            DataBase.Products.Delete(order.Id);
+            DataBase.Save();
+        }
+
+        public IEnumerable<OrderDTO> GetAllOrders()
+        {
+            Mapper.Initialize(cfg => cfg.CreateMap<Order, OrderDTO>());
+            return Mapper.Map<IEnumerable<Order>, List<OrderDTO>>(DataBase.Orders.GetAll());
+        }
+
+        public OrderDTO GetOrder(int? id)
+        {
+            if (id == null)
+                throw new ValidationException("Не установлено id заказа", "");
+            var order = DataBase.Orders.Get(id.Value);
+            if (order == null)
+                throw new ValidationException("Не найден заказ", "");
+            Mapper.Initialize(cfg => cfg.CreateMap<Order, OrderDTO>());
+            return Mapper.Map<Order, OrderDTO>(order);
         }
 
         public IEnumerable<OrderDTO> GetOrdersByClient(int? id)
@@ -108,29 +63,8 @@ namespace BLL.OrderService
                 throw new ValidationException("Клиент не найден", "");
             var orders = DataBase.Orders.Find(x => x.ClientId == client.Id);
             Mapper.Initialize(cfg => cfg.CreateMap<Order, OrderDTO>());
-
             return Mapper.Map<IEnumerable<Order>, List<OrderDTO>>(orders);
         }
-
-        public IEnumerable<OrderDTO> GetOrdersByManagerName(string managerName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<OrderDTO> GetOrdersByClientName(string clientName)
-        {
-            var client = DataBase.Clients.GetAll().FirstOrDefault(x => x.ClientName.Equals(clientName));
-            if (client == null)
-            {
-                throw new ValidationException("Client with this name not found", "");
-            }
-            var orders = DataBase.Orders.Find(x => x.ClientId == client.Id);
-            if (orders == null)
-                throw new ValidationException("Заказы не найдены", "");
-            Mapper.Initialize(cfg => cfg.CreateMap<Order, OrderDTO>());
-            return Mapper.Map<IEnumerable<Order>, List<OrderDTO>>(orders);
-        }
-
         public IEnumerable<OrderDTO> GetOrdersByManager(int? id)
         {
             if (id == null)
@@ -142,38 +76,21 @@ namespace BLL.OrderService
             if (orders == null)
                 throw new ValidationException("Заказы не найдены", "");
             Mapper.Initialize(cfg => cfg.CreateMap<Order, OrderDTO>());
-
             return Mapper.Map<IEnumerable<Order>, List<OrderDTO>>(orders);
         }
-
-        public ClientDTO GetClient(int? clientId)
+        public IEnumerable<OrderDTO> GetOrdersByProduct(int? id)
         {
-            if (clientId == null)
-                throw new ValidationException("Не установлено id клиента", "");
-            var client = DataBase.Clients.Get(clientId.Value);
-            if (client == null)
-                throw new ValidationException("Клиент не найден", "");
-            Mapper.Initialize(cfg => cfg.CreateMap<Client, ClientDTO>());
-            return Mapper.Map<Client, ClientDTO>(client);
+            if (id == null)
+                throw new ValidationException("Не установлено id продукта", "");
+            var product = DataBase.Products.Get(id.Value);
+            if (product == null)
+                throw new ValidationException("Продукт не найден", "");
+            var orders = DataBase.Orders.Find(x => x.ProductId == product.Id);
+            if (orders == null)
+                throw new ValidationException("Заказы не найдены", "");
+            Mapper.Initialize(cfg => cfg.CreateMap<Order, OrderDTO>());
+            return Mapper.Map<IEnumerable<Order>, List<OrderDTO>>(orders);
         }
-
-        public IEnumerable<ClientDTO> GetClients()
-        {
-            Mapper.Initialize(cfg => cfg.CreateMap<Client, ClientDTO>());
-            return Mapper.Map<IEnumerable<Client>, List<ClientDTO>>(DataBase.Clients.GetAll());
-        }
-
-        public void Dispose()
-        {
-            DataBase.Dispose();
-        }
-        public IEnumerable<ManagerDTO> GetManagers()
-        {
-            Mapper.Initialize(cfg => cfg.CreateMap<Manager, ManagerDTO>());
-            return Mapper.Map<IEnumerable<Manager>, List<ManagerDTO>>(DataBase.Managers.GetAll());
-        }
-
-        
     }
 }
 

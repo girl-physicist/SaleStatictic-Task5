@@ -1,0 +1,14 @@
+﻿@model System.Collections.Generic.List<SaleStatictic_Task5.Models.ClientViewModel>
+
+<div id="clients">
+    <table class="table table-striped">
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ClientName</td>
+                <td>@item.Id</td>
+            </tr>
+        }
+    </table>
+
+</div>
