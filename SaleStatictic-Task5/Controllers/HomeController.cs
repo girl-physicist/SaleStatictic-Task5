@@ -1,49 +1,76 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using System.Net;
 using System.Web.Mvc;
-using System.Web.Security;
 using AutoMapper;
 using BLL.DTO;
 using BLL.Infrastructure;
 using BLL.Interfaces;
 using SaleStatictic_Task5.Models;
-using SaleStatictic_Task5.Models.ViewModels;
+
 
 namespace SaleStatictic_Task5.Controllers
 {
     public class HomeController : Controller
     {
-        private ApplicationDbContext _dbContext = new ApplicationDbContext();
+        private readonly ApplicationDbContext _dbContext = new ApplicationDbContext();
         private readonly IOrderService _orderService;
         private readonly IProductService _productService;
-        private readonly IClientService _clientService;
-        private readonly IManagerService _managerService;
-        public HomeController(IOrderService orderService, IManagerService managerService, IClientService clientService, IProductService productService)
+        public HomeController(IOrderService orderService, IProductService productService)
         {
             _orderService = orderService;
-            _managerService = managerService;
-            _clientService = clientService;
             _productService = productService;
         }
         //[Authorize]
         public ActionResult Index()
         {
-            IEnumerable<ProductDTO> productDtos = _productService.GetProducts();
-            Mapper.Initialize(cfg => cfg.CreateMap<ProductDTO, ProductViewModel>());
-            var products = Mapper.Map<IEnumerable<ProductDTO>, List<ProductViewModel>>(productDtos);
-            ViewBag.Products = products;
             return View();
         }
 
-        public ActionResult Managers()
+        public ActionResult Filter(string manager, string product,string client, string date)
         {
-            IEnumerable<ManagerDTO> managerDtos = _managerService.GetManagers();
-            Mapper.Initialize(cfg => cfg.CreateMap<ManagerDTO, ManagerViewModel>());
-            var managers = Mapper.Map<IEnumerable<ManagerDTO>, List<ManagerViewModel>>(managerDtos);
-            return PartialView(managers);
+            var orders = _orderService.GetAllOrders();
+            var managers = orders.Select(x => x.ManagerName).Distinct().ToList();
+            managers.Insert(0, "All");
+            var products = orders.Select(x => x.ProductName).Distinct().ToList();
+            products.Insert(0, "All");
+            var clients = orders.Select(x => x.ClientName).Distinct().ToList();
+            clients.Insert(0, "All");
+            var dates = orders.Select(x => x.Date.ToString("d")).Distinct().ToList();
+            dates.Insert(0, "All");
+
+            if (!string.IsNullOrEmpty(manager) && !manager.Equals("All"))
+            {
+                orders = orders.Where(x => x.ManagerName == manager);
+            }
+
+            if (!string.IsNullOrEmpty(product) && !product.Equals("All"))
+            {
+                orders = orders.Where(x => x.ProductName == product);
+            }
+
+            if (!string.IsNullOrEmpty(client) && !client.Equals("All"))
+            {
+                orders = orders.Where(x => x.ClientName == client);
+            }
+
+            if (!string.IsNullOrEmpty(date) && !date.Equals("All"))
+            {
+                orders = orders.Where(x => x.Date.ToString("d") == date);
+            }
+            var saleInfoViewModel = new SaleInfoViewModel
+            {
+                Orders = orders,
+                Managers = new SelectList(managers),
+                Products = new SelectList(products),
+                Clients = new SelectList(clients),
+                Dates = new SelectList(dates)
+            };
+
+            return PartialView(saleInfoViewModel);
         }
+
+
         public JsonResult GetProducts()
         {
             IEnumerable<ProductDTO> productDtos = _productService.GetProducts();
@@ -52,19 +79,22 @@ namespace SaleStatictic_Task5.Controllers
 
             return Json(new { Products = result }, JsonRequestBehavior.AllowGet);
         }
-        public ActionResult Clients()
+        public IEnumerable<ChartData> GetChartData()
         {
-            IEnumerable<ClientDTO> managerDtos = _clientService.GetClients();
-            Mapper.Initialize(cfg => cfg.CreateMap<ClientDTO, ClientViewModel>());
-            var clients = Mapper.Map<IEnumerable<ClientDTO>, List<ClientViewModel>>(managerDtos);
-            return PartialView(clients);
+            IEnumerable<OrderDTO> orderDtos = _orderService.GetAllOrders();
+            Mapper.Initialize(cfg => cfg.CreateMap<OrderDTO, OrderViewModel>());
+            var result = Mapper.Map<IEnumerable<OrderDTO>, List<OrderViewModel>>(orderDtos);
+            var data = result.GroupBy(x => x.ManagerName).Select(y => new ChartData
+            {
+                ManagerId = y.Key,
+                CountClients = y.Select(m => m.ClientName).Distinct().Count()
+            }).ToList();
+            return data;
         }
-        public ActionResult Products()
+        public JsonResult Piechart()
         {
-            IEnumerable<ProductDTO> productDtos = _productService.GetProducts();
-            Mapper.Initialize(cfg => cfg.CreateMap<ProductDTO, ProductViewModel>());
-            var products = Mapper.Map<IEnumerable<ProductDTO>, List<ProductViewModel>>(productDtos);
-            return PartialView(products);
+            var list = GetChartData();
+            return Json(new { Orders = list }, JsonRequestBehavior.AllowGet);
         }
         public ActionResult Orders()
         {
@@ -73,7 +103,6 @@ namespace SaleStatictic_Task5.Controllers
             var orders = Mapper.Map<IEnumerable<OrderDTO>, List<OrderViewModel>>(orderDtos);
             return PartialView(orders);
         }
-
         [HttpGet]
         public ActionResult MakeOrder()
         {
@@ -83,16 +112,25 @@ namespace SaleStatictic_Task5.Controllers
         [HttpPost]
         public ActionResult MakeOrder(OrderViewModel order)
         {
-            try
+            if (ModelState.IsValid)
             {
-                Mapper.Initialize(cfg => cfg.CreateMap<OrderViewModel, OrderDTO>());
-                var orderDto = Mapper.Map<OrderViewModel, OrderDTO>(order);
-                _orderService.MakeOrder(orderDto);
-                return Content("<h2>Ваш заказ успешно оформлен</h2>");
-            }
-            catch (ValidationException ex)
-            {
-                ModelState.AddModelError(ex.Property, ex.Message);
+                try
+                {
+                    var orderDto = new OrderDTO
+                    {
+                        ClientName = order.ClientName,
+                        ManagerName = order.ManagerName,
+                        ProductName = order.ProductName,
+                        Date = order.Date
+                    };
+
+                    _orderService.MakeOrder(orderDto);
+                }
+                catch (ValidationException ex)
+                {
+                    ModelState.AddModelError(ex.Property, ex.Message);
+                }
+                return RedirectToAction("Index", "Home");
             }
             return View(order);
         }
@@ -116,18 +154,21 @@ namespace SaleStatictic_Task5.Controllers
             return PartialView(products);
         }
         [Authorize(Roles = "admin")]
-        public ActionResult About()
+        [HttpPost]
+        public ActionResult OrderFilterByClient(int? id)
         {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            IEnumerable<OrderDTO> orderDtos = _orderService.GetOrdersByClient(id);
+            if (orderDtos == null)
+            {
+                return HttpNotFound();
+            }
+            Mapper.Initialize(cfg => cfg.CreateMap<OrderDTO, OrderViewModel>());
+            var orders = Mapper.Map<IEnumerable<OrderDTO>, List<OrderViewModel>>(orderDtos);
+            return PartialView(orders);
         }
     }
 }

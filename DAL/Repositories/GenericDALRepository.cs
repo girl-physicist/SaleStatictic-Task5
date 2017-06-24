@@ -22,7 +22,6 @@ namespace DAL.Repositories
 
         public void Delete(int id)
         {
-            //T item = Db.Set<T>().Find(id);
             T item =Get(id);
             if (item != null)
                 Db.Set<T>().Remove(item);
@@ -38,7 +37,7 @@ namespace DAL.Repositories
             return Db.Set<T>().Find(id);
         }
 
-        public virtual IEnumerable<T> GetAll()
+        public virtual IQueryable<T> GetAll()
         {
             return Db.Set<T>();
         }

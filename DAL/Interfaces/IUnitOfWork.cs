@@ -9,7 +9,6 @@ namespace DAL.Interfaces
         IRepository<Manager> Managers { get; }
         IRepository<Product> Products { get; }
         IRepository<Order> Orders { get; }
-      //  IRepository<T>DbSet { get; }
         void Save();
     }
     

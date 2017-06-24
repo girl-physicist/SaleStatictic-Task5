@@ -31,6 +31,6 @@ namespace SaleStatictic_Task5.Models
             return new ApplicationDbContext();
         }
 
-        
+        public System.Data.Entity.DbSet<SaleStatictic_Task5.Models.OrderViewModel> OrderViewModels { get; set; }
     }
 }

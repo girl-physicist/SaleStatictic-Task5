@@ -49,7 +49,7 @@ namespace SaleStatictic_Task5.Controllers
             }
             return View(clientViewModel);
         }
-
+       
         // GET: ClientViewModels/Create
         public ActionResult Create()
         {
@@ -59,6 +59,7 @@ namespace SaleStatictic_Task5.Controllers
         // POST: ClientViewModels/Create
         // Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
         // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,ClientName")] ClientViewModel clientViewModel)
@@ -92,6 +93,7 @@ namespace SaleStatictic_Task5.Controllers
         // POST: ClientViewModels/Edit/5
         // Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
         // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,ClientName")] ClientViewModel clientViewModel)
@@ -122,6 +124,7 @@ namespace SaleStatictic_Task5.Controllers
         }
 
         // POST: ClientViewModels/Delete/5
+        [Authorize(Roles = "admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
@@ -132,7 +135,6 @@ namespace SaleStatictic_Task5.Controllers
             _clientService.RemoveClient(client);
             return RedirectToAction("Index");
         }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)

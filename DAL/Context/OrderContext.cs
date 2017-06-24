@@ -18,10 +18,6 @@ namespace DAL.Context
         public OrderContext(string connectionString)
             : base(connectionString)
         {
-
-         //   Database.Initialize(true);
         }
-
-        
     }
 }
