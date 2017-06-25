@@ -9,10 +9,13 @@ using System.Web.Mvc;
 using AutoMapper;
 using BLL.DTO;
 using BLL.Interfaces;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using SaleStatictic_Task5.Models;
 
 namespace SaleStatictic_Task5.Controllers
 {
+    [Authorize]
     public class ClientViewModelsController : Controller
     {
         readonly IClientService _clientService;
@@ -30,12 +33,28 @@ namespace SaleStatictic_Task5.Controllers
         // GET: ClientViewModels
         public ActionResult Index()
         {
+            string role = null;
+            ApplicationUserManager userManager = HttpContext.GetOwinContext()
+                .GetUserManager<ApplicationUserManager>();
+            ApplicationUser user = userManager.FindByEmail(User.Identity.Name);
+            if (user != null)
+                role = userManager.GetRoles(user.Id).ElementAt(0);
+            if (role == "admin")
+            {
+                var clients = GetAllClientViewModels();
+                ViewBag.Clients = clients;
+                return View(clients);
+            }
+            return RedirectToAction("ClientView");
+        }
+        public ActionResult ClientView()
+        {
             var clients = GetAllClientViewModels();
             ViewBag.Clients = clients;
-            return View(clients);
+            return PartialView(clients);
         }
-
         // GET: ClientViewModels/Details/5
+        [Authorize(Roles = "admin")]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -49,7 +68,7 @@ namespace SaleStatictic_Task5.Controllers
             }
             return View(clientViewModel);
         }
-       
+
         // GET: ClientViewModels/Create
         public ActionResult Create()
         {

@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using AutoMapper;
 using BLL.DTO;
+using BLL.Infrastructure;
 using BLL.Interfaces;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -16,21 +17,23 @@ using SaleStatictic_Task5.Models;
 namespace SaleStatictic_Task5.Controllers
 {
     [Authorize]
-    public class ProductViewModelsController : Controller
+    public class OrderViewModelsController : Controller
     {
-        readonly IProductService _productService;
-        public ProductViewModelsController(IProductService serv)
+        private readonly IOrderService _orderService;
+
+        public OrderViewModelsController(IOrderService orderService)
         {
-            _productService = serv;
+            _orderService = orderService;
         }
-        public IEnumerable<ProductViewModel> GetAllProductViewModels()
+
+        private IEnumerable<OrderViewModel> GetAllOrderViewModels()
         {
-            var productsDTO = _productService.GetProducts();
-            Mapper.Initialize(cfg => cfg.CreateMap<ProductDTO, ProductViewModel>());
-            var products = Mapper.Map<IEnumerable<ProductDTO>, List<ProductViewModel>>(productsDTO);
-            return products;
+            var ordersDTO = _orderService.GetAllOrders();
+            Mapper.Initialize(cfg => cfg.CreateMap<OrderDTO, OrderViewModel>());
+            var orders = Mapper.Map<IEnumerable<OrderDTO>, List<OrderViewModel>>(ordersDTO);
+            return orders;
         }
-        // GET: ProductViewModels
+        // GET: OrderViewModels
         public ActionResult Index()
         {
             string role = null;
@@ -41,19 +44,20 @@ namespace SaleStatictic_Task5.Controllers
                 role = userManager.GetRoles(user.Id).ElementAt(0);
             if (role == "admin")
             {
-                var products = GetAllProductViewModels();
-                ViewBag.Products = products;
-                return View(products);
+                var orders = GetAllOrderViewModels();
+                ViewBag.Orders = orders;
+                return View(orders);
             }
-            return RedirectToAction("ProductView");
+            return RedirectToAction("OrderView");
         }
-        public ActionResult ProductView()
+        public ActionResult OrderView()
         {
-            var products = GetAllProductViewModels();
-            ViewBag.Products = products;
-            return PartialView(products);
+            var orders = GetAllOrderViewModels();
+            ViewBag.Orders = orders;
+            return PartialView(orders);
         }
-        // GET: ProductViewModels/Details/5
+
+        // GET: OrderViewModels/Details/5
         [Authorize(Roles = "admin")]
         public ActionResult Details(int? id)
         {
@@ -61,97 +65,107 @@ namespace SaleStatictic_Task5.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ProductViewModel productViewModel = GetAllProductViewModels().FirstOrDefault(x => x.Id.Equals(id));
-            if (productViewModel == null)
+            OrderViewModel orderViewModel = GetAllOrderViewModels().FirstOrDefault(x => x.Id.Equals(id));
+            if (orderViewModel == null)
             {
                 return HttpNotFound();
             }
-            return View(productViewModel);
+            return View(orderViewModel);
         }
 
-        // GET: ProductViewModels/Create
+        // GET: OrderViewModels/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: ProductViewModels/Create
+        // POST: OrderViewModels/Create
         // Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
         // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "admin")]
-        public ActionResult Create([Bind(Include = "Id,ProductName,ProductCost")] ProductViewModel productViewModel)
+        public ActionResult Create([Bind(Include = "Id,Date,ClientName,ManagerName,ProductName")] OrderViewModel orderViewModel)
         {
             if (ModelState.IsValid)
             {
-                Mapper.Initialize(cfg => cfg.CreateMap<ProductViewModel, ProductDTO>());
-                var product = Mapper.Map<ProductViewModel, ProductDTO>(productViewModel);
-                _productService.AddProduct(product);
-                return RedirectToAction("Index");
+                try
+                {
+                    var orderDto = new OrderDTO
+                    {
+                        ClientName = orderViewModel.ClientName,
+                        ManagerName = orderViewModel.ManagerName,
+                        ProductName = orderViewModel.ProductName,
+                        Date = orderViewModel.Date
+                    };
+                    _orderService.MakeOrder(orderDto);
+                    return RedirectToAction("Index");
+                }
+                catch (ValidationException ex)
+                {
+                    ModelState.AddModelError(ex.Property, ex.Message);
+                }
             }
-
-            return View(productViewModel);
+            return View(orderViewModel);
         }
-
-        // GET: ProductViewModels/Edit/5
+        // GET: OrderViewModels/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ProductViewModel productViewModel = GetAllProductViewModels().FirstOrDefault(x => x.Id.Equals(id));
-            if (productViewModel == null)
+            OrderViewModel orderViewModel = GetAllOrderViewModels().FirstOrDefault(x => x.Id.Equals(id));
+            if (orderViewModel == null)
             {
                 return HttpNotFound();
             }
-            return View(productViewModel);
+            return View(orderViewModel);
         }
 
-        // POST: ProductViewModels/Edit/5
+        // POST: OrderViewModels/Edit/5
         // Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
         // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "admin")]
-        public ActionResult Edit([Bind(Include = "Id,ProductName,ProductCost")] ProductViewModel productViewModel)
+        public ActionResult Edit([Bind(Include = "Id,Date,ClientName,ManagerName,ProductName")] OrderViewModel orderViewModel)
         {
             if (ModelState.IsValid)
             {
-                Mapper.Initialize(cfg => cfg.CreateMap<ProductViewModel, ProductDTO>());
-                var product = Mapper.Map<ProductViewModel, ProductDTO>(productViewModel);
-                _productService.UpdateProduct(product);
+                Mapper.Initialize(cfg => cfg.CreateMap<OrderViewModel, OrderDTO>());
+                var order = Mapper.Map<OrderViewModel, OrderDTO>(orderViewModel);
+                _orderService.Update(order);
                 return RedirectToAction("Index");
             }
-            return View(productViewModel);
+            return View(orderViewModel);
         }
 
-        // GET: ProductViewModels/Delete/5
+        // GET: OrderViewModels/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ProductViewModel productViewModel = GetAllProductViewModels().FirstOrDefault(x => x.Id.Equals(id));
-            if (productViewModel == null)
+            OrderViewModel orderViewModel = GetAllOrderViewModels().FirstOrDefault(x => x.Id.Equals(id));
+            if (orderViewModel == null)
             {
                 return HttpNotFound();
             }
-            return View(productViewModel);
+            return View(orderViewModel);
         }
 
-        // POST: ProductViewModels/Delete/5
+        // POST: OrderViewModels/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "admin")]
         public ActionResult DeleteConfirmed(int id)
         {
-            ProductViewModel productViewModel = GetAllProductViewModels().FirstOrDefault(x => x.Id.Equals(id));
-            Mapper.Initialize(cfg => cfg.CreateMap<ProductViewModel, ProductDTO>());
-            var product = Mapper.Map<ProductViewModel, ProductDTO>(productViewModel);
-            _productService.RemoveProduct(product);
+            OrderViewModel orderViewModel = GetAllOrderViewModels().FirstOrDefault(x => x.Id.Equals(id));
+            Mapper.Initialize(cfg => cfg.CreateMap<OrderViewModel, OrderDTO>());
+            var order = Mapper.Map<OrderViewModel, OrderDTO>(orderViewModel);
+            _orderService.DeleteOrder(order);
             return RedirectToAction("Index");
         }
 
@@ -159,9 +173,10 @@ namespace SaleStatictic_Task5.Controllers
         {
             if (disposing)
             {
-                _productService.Dispose();
+                _orderService.Dispose();
             }
             base.Dispose(disposing);
         }
+
     }
 }

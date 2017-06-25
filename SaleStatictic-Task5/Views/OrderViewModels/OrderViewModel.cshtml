@@ -1,0 +1,15 @@
+﻿@model SaleStatictic_Task5.Models.OrderInfoViewModel
+<form method="get">
+    <div class="form-group">
+        <label class="control-label">Manager:</label>
+        @Html.DropDownList("manager", Model.Managers,
+            new { @class = "form-control" })
+
+        <label class="control-label">Product:</label>
+        @Html.DropDownList("product", Model.Products,
+            new { @class = "form-control" })
+        <label class="control-label">Client:</label>
+        @Html.DropDownList("client", Model.Clients,
+            new { @class = "form-control" })
+    </div>
+</form>

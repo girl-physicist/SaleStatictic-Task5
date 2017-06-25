@@ -11,20 +11,23 @@ using BLL.DTO;
 using SaleStatictic_Task5.Models;
 using SaleStatictic_Task5.Models.ViewModels;
 using BLL.Interfaces;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace SaleStatictic_Task5.Controllers
 {
+    [Authorize]
     public class ManagerViewModelsController : Controller
     {
         readonly IManagerService _managerService;
-        public ManagerViewModelsController(IManagerService serv) 
+        public ManagerViewModelsController(IManagerService serv)
         {
             _managerService = serv;
         }
-      
-        public IEnumerable<ManagerViewModel> GetAllManagerViewModels()
+
+        private IEnumerable<ManagerViewModel> GetAllManagerViewModels()
         {
-            var managersDTO =_managerService .GetManagers();
+            var managersDTO = _managerService.GetManagers();
             Mapper.Initialize(cfg => cfg.CreateMap<ManagerDTO, ManagerViewModel>());
             var managers = Mapper.Map<IEnumerable<ManagerDTO>, List<ManagerViewModel>>(managersDTO);
             return managers;
@@ -32,19 +35,36 @@ namespace SaleStatictic_Task5.Controllers
         // GET: ManagerViewModels
         public ActionResult Index()
         {
+            string role = null;
+            ApplicationUserManager userManager = HttpContext.GetOwinContext()
+                .GetUserManager<ApplicationUserManager>();
+            ApplicationUser user = userManager.FindByEmail(User.Identity.Name);
+            if (user != null)
+                role = userManager.GetRoles(user.Id).ElementAt(0);
+            if (role == "admin")
+            {
+                var managers = GetAllManagerViewModels();
+                ViewBag.Managers = managers;
+                return View(managers);
+            }
+            return RedirectToAction("ManagerView");
+        }
+        public ActionResult ManagerView()
+        {
             var managers = GetAllManagerViewModels();
             ViewBag.Managers = managers;
-            return View(managers);
+            return PartialView(managers);
         }
 
         // GET: ManagerViewModels/Details/5
+        [Authorize(Roles = "admin")]
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-           ManagerViewModel managerViewModel =GetAllManagerViewModels().FirstOrDefault(x=>x.Id.Equals(id));
+            ManagerViewModel managerViewModel = GetAllManagerViewModels().FirstOrDefault(x => x.Id.Equals(id));
             if (managerViewModel == null)
             {
                 return HttpNotFound();
@@ -63,6 +83,7 @@ namespace SaleStatictic_Task5.Controllers
         // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public ActionResult Create([Bind(Include = "Id,ManagerName")] ManagerViewModel managerViewModel)
         {
             if (ModelState.IsValid)
@@ -96,6 +117,7 @@ namespace SaleStatictic_Task5.Controllers
         // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public ActionResult Edit([Bind(Include = "Id,ManagerName")] ManagerViewModel managerViewModel)
         {
             if (ModelState.IsValid)
@@ -125,12 +147,13 @@ namespace SaleStatictic_Task5.Controllers
         // POST: ManagerViewModels/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public ActionResult DeleteConfirmed(int id)
         {
             ManagerViewModel managerViewModel = GetAllManagerViewModels().FirstOrDefault(x => x.Id.Equals(id));
             Mapper.Initialize(cfg => cfg.CreateMap<ManagerViewModel, ManagerDTO>());
             var manager = Mapper.Map<ManagerViewModel, ManagerDTO>(managerViewModel);
-           _managerService.RemoveManager(manager);
+            _managerService.RemoveManager(manager);
             return RedirectToAction("Index");
         }
         protected override void Dispose(bool disposing)

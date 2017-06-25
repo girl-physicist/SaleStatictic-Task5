@@ -7,12 +7,9 @@ namespace BLL.Interfaces
     public interface IOrderService : IService
     {
         void MakeOrder(OrderDTO orderDto);
-        void DeleteOrder(int id);
+        void DeleteOrder(OrderDTO orderDto);
         void Update(OrderDTO orderDto);
         OrderDTO GetOrder(int? id);
         IEnumerable<OrderDTO> GetAllOrders();
-        IEnumerable<OrderDTO> GetOrdersByManager(int? managerId);
-        IEnumerable<OrderDTO> GetOrdersByProduct(int? productId);
-        IEnumerable<OrderDTO> GetOrdersByClient(int? clientId);
     }
 }

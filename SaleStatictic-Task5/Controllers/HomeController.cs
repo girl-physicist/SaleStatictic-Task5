@@ -11,22 +11,26 @@ using SaleStatictic_Task5.Models;
 
 namespace SaleStatictic_Task5.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ApplicationDbContext _dbContext = new ApplicationDbContext();
         private readonly IOrderService _orderService;
         private readonly IProductService _productService;
-        public HomeController(IOrderService orderService, IProductService productService)
+        private readonly IManagerService _managerService;
+        private readonly IClientService _clientService;
+        public HomeController(IOrderService orderService, IProductService productService, IManagerService managerService, IClientService clientService)
         {
             _orderService = orderService;
             _productService = productService;
+            _managerService = managerService;
+            _clientService = clientService;
         }
-        //[Authorize]
+        
         public ActionResult Index()
         {
             return View();
         }
-
         public ActionResult Filter(string manager, string product,string client, string date)
         {
             var orders = _orderService.GetAllOrders();
@@ -68,16 +72,6 @@ namespace SaleStatictic_Task5.Controllers
             };
 
             return PartialView(saleInfoViewModel);
-        }
-
-
-        public JsonResult GetProducts()
-        {
-            IEnumerable<ProductDTO> productDtos = _productService.GetProducts();
-            Mapper.Initialize(cfg => cfg.CreateMap<ProductDTO, ProductViewModel>());
-            var result = Mapper.Map<IEnumerable<ProductDTO>, List<ProductViewModel>>(productDtos);
-
-            return Json(new { Products = result }, JsonRequestBehavior.AllowGet);
         }
         public IEnumerable<ChartData> GetChartData()
         {
@@ -139,36 +133,6 @@ namespace SaleStatictic_Task5.Controllers
             _dbContext.Dispose();
             _orderService.Dispose();
             base.Dispose(disposing);
-        }
-        [Authorize(Roles = "admin")]
-        [HttpPost]
-        public ActionResult ProductSearch(string name)
-        {
-            var allProduct = _productService.GetProducts().Where(x => x.ProductName.Contains(name)).ToList();
-            Mapper.Initialize(cfg => cfg.CreateMap<ProductDTO, ProductViewModel>());
-            var products = Mapper.Map<IEnumerable<ProductDTO>, List<ProductViewModel>>(allProduct);
-            if (products.Count <= 0)
-            {
-                return HttpNotFound();
-            }
-            return PartialView(products);
-        }
-        [Authorize(Roles = "admin")]
-        [HttpPost]
-        public ActionResult OrderFilterByClient(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            IEnumerable<OrderDTO> orderDtos = _orderService.GetOrdersByClient(id);
-            if (orderDtos == null)
-            {
-                return HttpNotFound();
-            }
-            Mapper.Initialize(cfg => cfg.CreateMap<OrderDTO, OrderViewModel>());
-            var orders = Mapper.Map<IEnumerable<OrderDTO>, List<OrderViewModel>>(orderDtos);
-            return PartialView(orders);
         }
     }
 }

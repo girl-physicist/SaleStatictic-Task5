@@ -57,11 +57,14 @@ namespace BLL.OrderService
             order.Product = product;
             order.Client = client;
             order.Manager = manager;
+            DataBase.Orders.Create(order);
             DataBase.Save();
         }
-        public void DeleteOrder(int id)
+        public void DeleteOrder(OrderDTO orderDto)
         {
-            DataBase.Orders.Delete(id);
+            AdjustmentAutoMapper();
+            var order = DataBase.Orders.Get(orderDto.Id);
+            DataBase.Orders.Update(order);
             DataBase.Save();
         }
         public IEnumerable<OrderDTO> GetAllOrders()
@@ -83,7 +86,6 @@ namespace BLL.OrderService
             }
             return orders;
         }
-
         public OrderDTO GetOrder(int? id)
         {
             if (id == null)
@@ -94,44 +96,7 @@ namespace BLL.OrderService
             return order;
         }
 
-        public IEnumerable<OrderDTO> GetOrdersByClient(int? id)
-        {
-            if (id == null)
-                throw new ValidationException("Не установлено id клиента", "");
-            var client = DataBase.Clients.Get(id.Value);
-            if (client == null)
-                throw new ValidationException("Клиент не найден", "");
-            var orders = DataBase.Orders.Find(x => x.ClientId == client.Id);
-            Mapper.Initialize(cfg => cfg.CreateMap<Order, OrderDTO>());
-            return Mapper.Map<IEnumerable<Order>, List<OrderDTO>>(orders);
-        }
-        public IEnumerable<OrderDTO> GetOrdersByManager(int? id)
-        {
-            if (id == null)
-                throw new ValidationException("Не установлено id менеджера", "");
-            var client = DataBase.Clients.Get(id.Value);
-            if (client == null)
-                throw new ValidationException("Менеджер не найден", "");
-            var orders = DataBase.Orders.Find(x => x.ClientId == client.Id);
-            if (orders == null)
-                throw new ValidationException("Заказы не найдены", "");
-            Mapper.Initialize(cfg => cfg.CreateMap<Order, OrderDTO>());
-            return Mapper.Map<IEnumerable<Order>, List<OrderDTO>>(orders);
-        }
-        public IEnumerable<OrderDTO> GetOrdersByProduct(int? id)
-        {
-            if (id == null)
-                throw new ValidationException("Не установлено id продукта", "");
-            var product = DataBase.Products.Get(id.Value);
-            if (product == null)
-                throw new ValidationException("Продукт не найден", "");
-            var orders = DataBase.Orders.Find(x => x.ProductId == product.Id);
-            if (orders == null)
-                throw new ValidationException("Заказы не найдены", "");
-            Mapper.Initialize(cfg => cfg.CreateMap<Order, OrderDTO>());
-            return Mapper.Map<IEnumerable<Order>, List<OrderDTO>>(orders);
-        }
-        public void Update(OrderDTO orderDto)
+      public void Update(OrderDTO orderDto)
         {
             AdjustmentAutoMapper();
             var order = DataBase.Orders.Get(orderDto.Id);
@@ -162,8 +127,6 @@ namespace BLL.OrderService
             DataBase.Orders.Update(order);
             DataBase.Save();
         }
-
-       
     }
 }
 

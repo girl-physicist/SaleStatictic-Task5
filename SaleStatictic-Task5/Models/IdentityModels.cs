@@ -18,18 +18,22 @@ namespace SaleStatictic_Task5.Models
             return userIdentity;
         }
     }
-
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {
         }
-
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();
         }
+
+        public System.Data.Entity.DbSet<SaleStatictic_Task5.Models.ClientViewModel> ClientViewModels { get; set; }
+
+        public System.Data.Entity.DbSet<SaleStatictic_Task5.Models.ManagerViewModel> ManagerViewModels { get; set; }
+
+        public System.Data.Entity.DbSet<SaleStatictic_Task5.Models.ProductViewModel> ProductViewModels { get; set; }
 
         public System.Data.Entity.DbSet<SaleStatictic_Task5.Models.OrderViewModel> OrderViewModels { get; set; }
     }

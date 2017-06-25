@@ -38,24 +38,9 @@
         </script>
     </div>
 <div class="row">
-    
-    @*<table class="table table-striped">
-        @foreach (var b in ViewBag.Products)
-        {
-            <tr>
-                <td>@b.Id</td>
-                <td>@b.ProductName</td>
-                <td>@b.ProductCost</td>
-            </tr>
-        }
-    </table>*@
+ 
     <div>
-        @using (Ajax.BeginForm("ProductSearch", new AjaxOptions { UpdateTargetId = "results",LoadingElementId="loading", 
-            LoadingElementDuration=1000}))
-        {
-            <input type="text" name="name" />
-            <input type="submit" value="Поиск продукта" />
-        }
+       
         
        
         @using (Ajax.BeginForm("Orders", new AjaxOptions { UpdateTargetId = "orders",LoadingElementId="loading2", 
@@ -70,7 +55,7 @@
             <input type="submit" value="ShowOrderForm" />
         }
 
-       <div id ="results"></div>
+     
         <div id="orders"></div>
         <div id="loading" style="display:none; color:Red; font-weight:bold;">
             <p>Loading...</p>

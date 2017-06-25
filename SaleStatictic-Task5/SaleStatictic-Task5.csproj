@@ -205,6 +205,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\OrderViewModelsController.cs" />
     <Compile Include="Models\ChartData.cs" />
     <Compile Include="Controllers\ClientViewModelsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -309,8 +310,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\Account\ConfirmEmail.cshtml" />
@@ -338,13 +337,6 @@
     <Content Include="Views\ManagerViewModels\Details.cshtml" />
     <Content Include="Views\ManagerViewModels\Edit.cshtml" />
     <Content Include="Views\ManagerViewModels\Index.cshtml" />
-    <Content Include="Views\Home\ProductSearch.cshtml" />
-    <Content Include="Views\Home\SearchOrderByClient.cshtml" />
-    <Content Include="Views\Home\SearchOrderByManager.cshtml" />
-    <Content Include="Views\Home\Orders.cshtml" />
-    <Content Include="Views\Home\Products.cshtml" />
-    <Content Include="Views\Home\Clients.cshtml" />
-    <Content Include="Views\Home\Managers.cshtml" />
     <Content Include="Views\ClientViewModels\Create.cshtml" />
     <Content Include="Views\ClientViewModels\Delete.cshtml" />
     <Content Include="Views\ClientViewModels\Details.cshtml" />
@@ -355,8 +347,19 @@
     <Content Include="Views\ProductViewModels\Details.cshtml" />
     <Content Include="Views\ProductViewModels\Edit.cshtml" />
     <Content Include="Views\ProductViewModels\Index.cshtml" />
-    <Content Include="Views\Home\OrderFilterByClient.cshtml" />
     <Content Include="Views\Home\Filter.cshtml" />
+    <Content Include="Views\ClientViewModels\ClientView.cshtml" />
+    <Content Include="Views\ManagerViewModels\ManagerView.cshtml" />
+    <Content Include="Views\ProductViewModels\ProductView.cshtml" />
+    <Content Include="Views\Home\Orders.cshtml" />
+    <Content Include="Views\OrderViewModels\Create.cshtml" />
+    <Content Include="Views\OrderViewModels\Delete.cshtml" />
+    <Content Include="Views\OrderViewModels\Details.cshtml" />
+    <Content Include="Views\OrderViewModels\Edit.cshtml" />
+    <Content Include="Views\OrderViewModels\Index.cshtml" />
+    <Content Include="Views\OrderViewModels\OrderView.cshtml" />
+    <Content Include="Views\OrderViewModels\OrdreInfoView.cshtml" />
+    <Content Include="Views\OrderViewModels\OrderViewModel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
