@@ -22,8 +22,6 @@ namespace SaleStatictic_Task5.Models
 
         [Required]
         [Display(Name = "Название товара")]
-        [StringLength(50, MinimumLength = 2, ErrorMessage = "The length of this line must be at from 3 to 50 symbols")]
         public string ProductName { get; set; }
-
     }
 }

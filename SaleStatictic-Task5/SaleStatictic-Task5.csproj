@@ -331,7 +331,6 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\Home\MakeOrder.cshtml" />
     <Content Include="Views\ManagerViewModels\Create.cshtml" />
     <Content Include="Views\ManagerViewModels\Delete.cshtml" />
     <Content Include="Views\ManagerViewModels\Details.cshtml" />
@@ -347,19 +346,16 @@
     <Content Include="Views\ProductViewModels\Details.cshtml" />
     <Content Include="Views\ProductViewModels\Edit.cshtml" />
     <Content Include="Views\ProductViewModels\Index.cshtml" />
-    <Content Include="Views\Home\Filter.cshtml" />
     <Content Include="Views\ClientViewModels\ClientView.cshtml" />
     <Content Include="Views\ManagerViewModels\ManagerView.cshtml" />
     <Content Include="Views\ProductViewModels\ProductView.cshtml" />
-    <Content Include="Views\Home\Orders.cshtml" />
     <Content Include="Views\OrderViewModels\Create.cshtml" />
     <Content Include="Views\OrderViewModels\Delete.cshtml" />
     <Content Include="Views\OrderViewModels\Details.cshtml" />
     <Content Include="Views\OrderViewModels\Edit.cshtml" />
     <Content Include="Views\OrderViewModels\Index.cshtml" />
+    <Content Include="Views\Home\Filter.cshtml" />
     <Content Include="Views\OrderViewModels\OrderView.cshtml" />
-    <Content Include="Views\OrderViewModels\OrdreInfoView.cshtml" />
-    <Content Include="Views\OrderViewModels\OrderViewModel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,36 +1,36 @@
 ﻿@model SaleStatictic_Task5.Models.SaleInfoViewModel
 
 @{
+    Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "Orders list";
 }
-
 <form method="get">
     <div class="form-group">
-        <label class="control-label">Manager:</label>
+        @Html.DisplayNameFor(model => model.Managers)
         @Html.DropDownList("manager", Model.Managers,
             new { @class = "form-control" })
 
-        <label class="control-label">Product:</label>
+        @Html.DisplayNameFor(model => model.Products)
         @Html.DropDownList("product", Model.Products,
             new { @class = "form-control" })
-        <label class="control-label">Client:</label>
+       
+        @Html.DisplayNameFor(model => model.Clients)
         @Html.DropDownList("client", Model.Clients,
             new { @class = "form-control" })
 
-        <label class="control-label">Date:</label>
+        @Html.DisplayNameFor(model => model.Dates)
         @Html.DropDownList("date", Model.Dates,
             new { @class = "form-control" })
 
-         </div>
+    </div>
     <input type="submit" value="Filter" class="btn btn-default" />
 </form>
-
 <table class="table table-striped">
     <tr>
-        <th>Manager name</th>
-        <th>Product name</th>
-        <th>Client name</th>
-        <th>Date</th>
+        <th>@Html.DisplayNameFor(model => model.Managers)</th>
+        <th>@Html.DisplayNameFor(model => model.Products)</th>
+        <th>@Html.DisplayNameFor(model => model.Clients)</th>
+        <th>@Html.DisplayNameFor(model => model.Dates)</th>
         <th></th>
     </tr>
 
@@ -52,4 +52,3 @@
         </tr>
     }
 </table>
-

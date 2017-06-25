@@ -2,70 +2,75 @@
     ViewBag.Title = "Home Page";
 }
 <div id="chart_div">
-        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-        <script type="text/javascript">
-            google.charts.load('current', {'packages':['corechart']});
-            google.charts.setOnLoadCallback(drawChart);
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
 
 
-            function drawChart() {
+        function drawChart() {
 
-                var options = {
-                    'title': 'Managers/Сlient',
-                    'width': 400,
-                    'height': 300
-                };
+            var options = {
+                'title': 'Managers/Сlient',
+                'width': 400,
+                'height': 300
+            };
 
-                var data = new google.visualization.DataTable();
-                data.addColumn('string', 'ManagerId');
-                data.addColumn('number', 'CountClients');
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'ManagerName');
+            data.addColumn('number', 'CountClients');
 
-                $.getJSON('@Url.Action("Piechart", "Home")', null,
-                    function (result) {
-                        if (result.Orders.length) {
-                            $.each(result.Orders, function (index, c) {
-                                data.addRow(
-                                    [c.ManagerId, c.CountClients]
-                                );
-                            });
-                            // Отрисовка диаграммы
-                            var chart = new google.visualization.PieChart(
-                                document.getElementById('chart_div'));
-                            chart.draw(data, options);
-                        };
-                    });
-            }
-        </script>
-    </div>
+            $.getJSON('@Url.Action("Piechart", "Home")', null,
+                function (result) {
+                    if (result.Orders.length) {
+                        $.each(result.Orders, function (index, c) {
+                            data.addRow(
+                                [c.ManagerName, c.CountClients]
+                            );
+                        });
+                        // Отрисовка диаграммы
+                        var chart = new google.visualization.PieChart(
+                            document.getElementById('chart_div'));
+                        chart.draw(data, options);
+                    };
+                });
+        }
+    </script>
+</div>
 <div class="row">
- 
-    <div>
-       
-        
-       
-        @using (Ajax.BeginForm("Orders", new AjaxOptions { UpdateTargetId = "orders",LoadingElementId="loading2", 
-            LoadingElementDuration=1000 }))
-        {
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#showClients').click(function (event) {
+                event.preventDefault();
+                var url = $(this).attr('href');
+                $('#Show').load(url);
+            });
 
-            <input type="submit" value="Показать заказы" />
-        }
-       
-        @using (Ajax.BeginForm("MakeOrder", new AjaxOptions { UpdateTargetId = "makeOrder" }))
-        {
-            <input type="submit" value="ShowOrderForm" />
-        }
+            $('#showOrders').click(function (event) {
+                event.preventDefault();
+                var url = $(this).attr('href');
+                $('#Show').load(url);
+            });
 
-     
-        <div id="orders"></div>
-        <div id="loading" style="display:none; color:Red; font-weight:bold;">
-            <p>Loading...</p>
-        </div>
-        <div id="makeOrder"></div>
-        <div id="chartdiv" style="width: 600px; height: 350px;">  
-        </div>
-    
-    </div>
+            $('#showManagers').click(function (event) {
+                event.preventDefault();
+                var url = $(this).attr('href');
+                $('#Show').load(url);
+            });
+        });
+    </script>
+    <p>@Html.ActionLink("Показать клиентов", "Index", "ClientViewModels", null, new { id = "showClients" })</p>
+    <p>@Html.ActionLink("Показать заказы", "Index", "OrderViewModels", null, new { id = "showOrders" })</p>
+    <p>@Html.ActionLink("Показать менеджеров", "Index", "ManagerViewModels", null, new { id = "showManagers" })</p>
+    @using (Ajax.BeginForm("Filter", new AjaxOptions { UpdateTargetId = "Show" }))
+    {
+        <input type="submit" value="ShowOrderForm" />
+    }
+    <div id="Show"></div>
 </div>
 @Scripts.Render("~/scripts/jquery-1.10.2.min.js")
 @Scripts.Render("~/scripts/jquery.unobtrusive-ajax.min.js")
+
+
 

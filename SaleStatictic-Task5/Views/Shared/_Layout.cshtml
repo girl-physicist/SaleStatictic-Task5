@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title – приложение ASP.NET</title>
@@ -25,6 +25,8 @@
                     <li>@Html.ActionLink("ShowClients", "Index", "ClientViewModels")</li>
                     <li>@Html.ActionLink("ShowManagers", "Index", "ManagerViewModels")</li>
                     <li>@Html.ActionLink("ShowProducts", "Index", "ProductViewModels")</li>
+                    <li>@Html.ActionLink("ShowOrders", "Index", "OrderViewModels")</li>
+                    <li>@Html.ActionLink("FilterOutOrders", "Filter", "Home")</li>
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
@@ -34,7 +36,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year – приложение ASP.NET</p>
+            
         </footer>
     </div>
 

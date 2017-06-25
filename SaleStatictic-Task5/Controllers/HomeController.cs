@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Web.Mvc;
 using AutoMapper;
 using BLL.DTO;
-using BLL.Infrastructure;
 using BLL.Interfaces;
 using SaleStatictic_Task5.Models;
 
@@ -16,16 +14,11 @@ namespace SaleStatictic_Task5.Controllers
     {
         private readonly ApplicationDbContext _dbContext = new ApplicationDbContext();
         private readonly IOrderService _orderService;
-        private readonly IProductService _productService;
-        private readonly IManagerService _managerService;
-        private readonly IClientService _clientService;
-        public HomeController(IOrderService orderService, IProductService productService, IManagerService managerService, IClientService clientService)
+       
+        public HomeController(IOrderService orderService)
         {
             _orderService = orderService;
-            _productService = productService;
-            _managerService = managerService;
-            _clientService = clientService;
-        }
+             }
         
         public ActionResult Index()
         {
@@ -80,7 +73,7 @@ namespace SaleStatictic_Task5.Controllers
             var result = Mapper.Map<IEnumerable<OrderDTO>, List<OrderViewModel>>(orderDtos);
             var data = result.GroupBy(x => x.ManagerName).Select(y => new ChartData
             {
-                ManagerId = y.Key,
+                ManagerName = y.Key,
                 CountClients = y.Select(m => m.ClientName).Distinct().Count()
             }).ToList();
             return data;
@@ -90,44 +83,7 @@ namespace SaleStatictic_Task5.Controllers
             var list = GetChartData();
             return Json(new { Orders = list }, JsonRequestBehavior.AllowGet);
         }
-        public ActionResult Orders()
-        {
-            IEnumerable<OrderDTO> orderDtos = _orderService.GetAllOrders();
-            Mapper.Initialize(cfg => cfg.CreateMap<OrderDTO, OrderViewModel>());
-            var orders = Mapper.Map<IEnumerable<OrderDTO>, List<OrderViewModel>>(orderDtos);
-            return PartialView(orders);
-        }
-        [HttpGet]
-        public ActionResult MakeOrder()
-        {
-            return PartialView();
-        }
-
-        [HttpPost]
-        public ActionResult MakeOrder(OrderViewModel order)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    var orderDto = new OrderDTO
-                    {
-                        ClientName = order.ClientName,
-                        ManagerName = order.ManagerName,
-                        ProductName = order.ProductName,
-                        Date = order.Date
-                    };
-
-                    _orderService.MakeOrder(orderDto);
-                }
-                catch (ValidationException ex)
-                {
-                    ModelState.AddModelError(ex.Property, ex.Message);
-                }
-                return RedirectToAction("Index", "Home");
-            }
-            return View(order);
-        }
+        
         protected override void Dispose(bool disposing)
         {
             _dbContext.Dispose();

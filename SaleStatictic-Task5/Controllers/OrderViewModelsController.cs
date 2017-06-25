@@ -168,7 +168,6 @@ namespace SaleStatictic_Task5.Controllers
             _orderService.DeleteOrder(order);
             return RedirectToAction("Index");
         }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)

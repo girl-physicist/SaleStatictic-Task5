@@ -2,7 +2,7 @@
 {
     public class ChartData
     {
-        public string ManagerId { get; set; }
+        public string ManagerName { get; set; }
         public int CountClients { get; set; }
     }
 }

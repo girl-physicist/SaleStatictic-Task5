@@ -40,9 +40,7 @@ namespace BLL.OrderService
 
             if (product == null)
             {
-                //product = Mapper.Map<OrderDTO, Product>(orderDto);
-                //DataBase.Products.Create(product);
-               throw new ValidationException("Товар не найден!", "");
+                throw new ValidationException("Товар не найден!", "");
             }
             if (client == null)
             {
@@ -64,7 +62,7 @@ namespace BLL.OrderService
         {
             AdjustmentAutoMapper();
             var order = DataBase.Orders.Get(orderDto.Id);
-            DataBase.Orders.Update(order);
+            DataBase.Orders.Delete(order.Id);
             DataBase.Save();
         }
         public IEnumerable<OrderDTO> GetAllOrders()
