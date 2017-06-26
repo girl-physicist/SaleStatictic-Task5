@@ -4,11 +4,9 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "OrderView";
 }
+<h2>Заказы</h2>
 <table class="table">
     <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Id)
-        </th>
         <th>
             @Html.DisplayNameFor(model => model.ProductName)
         </th>
@@ -22,9 +20,6 @@
 
     @foreach (var item in Model) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ProductName)
             </td>

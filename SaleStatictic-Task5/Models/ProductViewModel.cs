@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
 namespace SaleStatictic_Task5.Models
 {
     public class ProductViewModel
     {
-        [Required]
-        [Display(Name = "Id товара")]
+        [HiddenInput(DisplayValue = false)]
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Введите название товара")]

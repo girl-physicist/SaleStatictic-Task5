@@ -58,14 +58,20 @@
                 var url = $(this).attr('href');
                 $('#Show').load(url);
             });
+            $('#showProducts').click(function (event) {
+                event.preventDefault();
+                var url = $(this).attr('href');
+                $('#Show').load(url);
+            });
         });
     </script>
     <p>@Html.ActionLink("Показать клиентов", "Index", "ClientViewModels", null, new { id = "showClients" })</p>
     <p>@Html.ActionLink("Показать заказы", "Index", "OrderViewModels", null, new { id = "showOrders" })</p>
     <p>@Html.ActionLink("Показать менеджеров", "Index", "ManagerViewModels", null, new { id = "showManagers" })</p>
+    <p>@Html.ActionLink("Показать товары", "Index", "ProductViewModels", null, new { id = "showProducts" })</p>
     @using (Ajax.BeginForm("Filter", new AjaxOptions { UpdateTargetId = "Show" }))
     {
-        <input type="submit" value="ShowOrderForm" />
+        <input type="submit" value="Перейти на форму фильтрации заказов" />
     }
     <div id="Show"></div>
 </div>
