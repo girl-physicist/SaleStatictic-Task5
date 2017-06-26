@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using BLL.DTO;
-using BLL.OrderService;
 
 namespace BLL.Interfaces
 {

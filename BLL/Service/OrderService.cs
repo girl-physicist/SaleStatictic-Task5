@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using AutoMapper;
@@ -9,9 +8,9 @@ using BLL.Interfaces;
 using DAL.Entities;
 using DAL.Interfaces;
 
-namespace BLL.OrderService
+namespace BLL.Service
 {
-    public class OrderService :Service,IOrderService 
+    public class OrderService : Service<Order, OrderDTO>, IOrderService
     {
         public OrderService(IUnitOfWork unitOfWorkow) : base(unitOfWorkow)
         {
@@ -94,7 +93,7 @@ namespace BLL.OrderService
             return order;
         }
 
-      public void Update(OrderDTO orderDto)
+        public void Update(OrderDTO orderDto)
         {
             AdjustmentAutoMapper();
             var order = DataBase.Orders.Get(orderDto.Id);

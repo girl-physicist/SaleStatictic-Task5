@@ -2,7 +2,7 @@
 
 namespace DAL.Entities
 {
-  public  class Client
+    public class Client
     {
         public int Id { get; set; }
         public string ClientName { get; set; }

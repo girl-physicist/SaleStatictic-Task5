@@ -69,11 +69,11 @@
     <Compile Include="Interfaces\IManagerService.cs" />
     <Compile Include="Interfaces\IProductService.cs" />
     <Compile Include="Interfaces\IService.cs" />
-    <Compile Include="OrderService\ClientServise.cs" />
-    <Compile Include="OrderService\ManagerService.cs" />
-    <Compile Include="OrderService\OrderService.cs" />
-    <Compile Include="OrderService\ProductServise.cs" />
-    <Compile Include="OrderService\Service.cs" />
+    <Compile Include="Service\ClientServise.cs" />
+    <Compile Include="Service\ManagerService.cs" />
+    <Compile Include="Service\OrderService.cs" />
+    <Compile Include="Service\ProductServise.cs" />
+    <Compile Include="Service\Service.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

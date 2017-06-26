@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using AutoMapper;
 using BLL.DTO;
 using BLL.Infrastructure;
@@ -10,9 +6,9 @@ using BLL.Interfaces;
 using DAL.Entities;
 using DAL.Interfaces;
 
-namespace BLL.OrderService
+namespace BLL.Service
 {
-    public class ManagerService : Service,IManagerService
+    public class ManagerService : Service<Manager, ManagerDTO>, IManagerService
     {
         public ManagerService(IUnitOfWork unitOfWorkow) : base(unitOfWorkow)
         {
@@ -24,28 +20,21 @@ namespace BLL.OrderService
             var manager = DataBase.Managers.Get(id.Value);
             if (manager == null)
                 throw new ValidationException("Не найден менеджер", "");
-            Mapper.Initialize(cfg => cfg.CreateMap<Manager, ManagerDTO>());
-            return Mapper.Map<Manager, ManagerDTO>(manager);
+            return MapperEntityToDTO(manager);
         }
         public void AddManager(ManagerDTO managerDto)
         {
-            Mapper.Initialize(cfg => cfg.CreateMap<ManagerDTO, Manager>());
-            var manager = Mapper.Map<ManagerDTO, Manager>(managerDto);
-            DataBase.Managers.Create(manager);
+            DataBase.Managers.Create(MapperDTOtoEntity(managerDto));
             DataBase.Save();
         }
         public void UpdateManager(ManagerDTO managerDto)
         {
-            Mapper.Initialize(cfg => cfg.CreateMap<ManagerDTO, Manager>());
-            var manager = Mapper.Map<ManagerDTO, Manager>(managerDto);
-            DataBase.Managers.Update(manager);
+            DataBase.Managers.Update(MapperDTOtoEntity(managerDto));
             DataBase.Save();
         }
         public void RemoveManager(ManagerDTO managerDto)
         {
-            Mapper.Initialize(cfg => cfg.CreateMap<ManagerDTO, Manager>());
-            var manager = Mapper.Map<ManagerDTO, Manager>(managerDto);
-            DataBase.Managers.Delete(manager.Id);
+            DataBase.Managers.Delete(MapperDTOtoEntity(managerDto).Id);
             DataBase.Save();
         }
         public IEnumerable<ManagerDTO> GetManagers()

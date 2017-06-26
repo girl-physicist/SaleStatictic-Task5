@@ -83,14 +83,23 @@ namespace SaleStatictic_Task5.Controllers
         [Authorize(Roles = "admin")]
         public ActionResult Create([Bind(Include = "Id,ProductName,ProductCost")] ProductViewModel productViewModel)
         {
+            if (string.IsNullOrEmpty(productViewModel.ProductName))
+            {
+                ModelState.AddModelError("ProductName", "Ваедите название товара");
+            }
+            else if (productViewModel.ProductName.Length < 3)
+            {
+                ModelState.AddModelError("ProductName", "Недопустимая длина строки");
+            }
             if (ModelState.IsValid)
             {
+                ViewBag.Message = "Валидация пройдена";
                 Mapper.Initialize(cfg => cfg.CreateMap<ProductViewModel, ProductDTO>());
                 var product = Mapper.Map<ProductViewModel, ProductDTO>(productViewModel);
                 _productService.AddProduct(product);
                 return RedirectToAction("Index");
             }
-
+            ViewBag.Message = "Запрос не прошел валидацию";
             return View(productViewModel);
         }
 

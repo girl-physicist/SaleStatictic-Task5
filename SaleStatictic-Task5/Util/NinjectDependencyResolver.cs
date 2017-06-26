@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using BLL.Interfaces;
-using BLL.OrderService;
+using BLL.Service;
 using Ninject;
 
 namespace SaleStatictic_Task5.Util
@@ -27,7 +27,6 @@ namespace SaleStatictic_Task5.Util
         }
         private void AddBindings()
         {
-            _kernel.Bind<IService>().To<Service>();
             _kernel.Bind<IOrderService>().To<OrderService>();
             _kernel.Bind<IManagerService>().To<ManagerService>();
             _kernel.Bind<IClientService>().To<ClientServise>();

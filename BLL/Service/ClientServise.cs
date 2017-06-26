@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using AutoMapper;
 using BLL.DTO;
 using BLL.Infrastructure;
@@ -10,14 +6,13 @@ using BLL.Interfaces;
 using DAL.Entities;
 using DAL.Interfaces;
 
-namespace BLL.OrderService
+namespace BLL.Service
 {
-    public class ClientServise : Service,IClientService
+    public class ClientServise : Service<Client, ClientDTO>, IClientService
     {
         public ClientServise(IUnitOfWork unitOfWorkow) : base(unitOfWorkow)
         {
         }
-
         public ClientDTO GetClient(int? id)
         {
             if (id == null)
@@ -25,31 +20,24 @@ namespace BLL.OrderService
             var client = DataBase.Clients.Get(id.Value);
             if (client == null)
                 throw new ValidationException("Не найден менеджер", "");
-            Mapper.Initialize(cfg => cfg.CreateMap<Client, ClientDTO>());
-            return Mapper.Map<Client, ClientDTO>(client);
+            return MapperEntityToDTO(client);
         }
 
         public void AddClient(ClientDTO clientDto)
         {
-            Mapper.Initialize(cfg => cfg.CreateMap<ClientDTO, Client>());
-            var client = Mapper.Map<ClientDTO, Client>(clientDto);
-            DataBase.Clients.Create(client);
+            DataBase.Clients.Create(MapperDTOtoEntity(clientDto));
             DataBase.Save();
         }
 
         public void UpdateClient(ClientDTO clientDto)
         {
-            Mapper.Initialize(cfg => cfg.CreateMap<ClientDTO, Client>());
-            var client = Mapper.Map<ClientDTO, Client>(clientDto);
-            DataBase.Clients.Update(client);
+            DataBase.Clients.Update(MapperDTOtoEntity(clientDto));
             DataBase.Save();
         }
 
         public void RemoveClient(ClientDTO clientDto)
         {
-            Mapper.Initialize(cfg => cfg.CreateMap<ClientDTO, Client>());
-            var client = Mapper.Map<ClientDTO, Client>(clientDto);
-            DataBase.Clients.Delete(client.Id);
+            DataBase.Clients.Delete(MapperDTOtoEntity(clientDto).Id);
             DataBase.Save();
         }
 
