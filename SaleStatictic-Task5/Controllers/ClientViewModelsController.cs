@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using AutoMapper;
 using BLL.DTO;
+using BLL.Infrastructure;
 using BLL.Interfaces;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -83,14 +82,28 @@ namespace SaleStatictic_Task5.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,ClientName")] ClientViewModel clientViewModel)
         {
+            if (string.IsNullOrEmpty(clientViewModel.ClientName))
+            {
+                ModelState.AddModelError("ClienName", "Ваедите имя клиента");
+            }
+            else if (clientViewModel.ClientName.Length < 3)
+            {
+                ModelState.AddModelError("ClientName", "Недопустимая длина строки");
+            }
             if (ModelState.IsValid)
             {
-                Mapper.Initialize(cfg => cfg.CreateMap<ClientViewModel, ClientDTO>());
-                var client = Mapper.Map<ClientViewModel, ClientDTO>(clientViewModel);
-                _clientService.AddClient(client);
-                return RedirectToAction("Index");
+                try
+                {
+                    Mapper.Initialize(cfg => cfg.CreateMap<ClientViewModel, ClientDTO>());
+                    var client = Mapper.Map<ClientViewModel, ClientDTO>(clientViewModel);
+                    _clientService.AddClient(client);
+                    return RedirectToAction("Index");
+                }
+                catch (ValidationException ex)
+                {
+                    ModelState.AddModelError(ex.Property, ex.Message);
+                }
             }
-
             return View(clientViewModel);
         }
 
@@ -117,12 +130,27 @@ namespace SaleStatictic_Task5.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,ClientName")] ClientViewModel clientViewModel)
         {
+            if (string.IsNullOrEmpty(clientViewModel.ClientName))
+            {
+                ModelState.AddModelError("ClienName", "Ваедите имя клиента");
+            }
+            else if (clientViewModel.ClientName.Length < 3)
+            {
+                ModelState.AddModelError("ClientName", "Недопустимая длина строки");
+            }
             if (ModelState.IsValid)
             {
-                Mapper.Initialize(cfg => cfg.CreateMap<ClientViewModel, ClientDTO>());
-                var client = Mapper.Map<ClientViewModel, ClientDTO>(clientViewModel);
-                _clientService.UpdateClient(client);
-                return RedirectToAction("Index");
+                try
+                {
+                    Mapper.Initialize(cfg => cfg.CreateMap<ClientViewModel, ClientDTO>());
+                    var client = Mapper.Map<ClientViewModel, ClientDTO>(clientViewModel);
+                    _clientService.UpdateClient(client);
+                    return RedirectToAction("Index");
+                }
+                catch (ValidationException ex)
+                {
+                    ModelState.AddModelError(ex.Property, ex.Message);
+                }
             }
             return View(clientViewModel);
         }

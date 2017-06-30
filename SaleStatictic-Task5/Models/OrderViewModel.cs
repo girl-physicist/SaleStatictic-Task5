@@ -11,7 +11,7 @@ namespace SaleStatictic_Task5.Models
 
         [Required(ErrorMessage = "Введите дату")]
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:dd'/'MM'/'yyyy}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:dd'/'MM'/'yyyy}"/*, ApplyFormatInEditMode = true*/)]
         [Display (Name = "Дата")]
         public DateTime Date { get; set; }
         

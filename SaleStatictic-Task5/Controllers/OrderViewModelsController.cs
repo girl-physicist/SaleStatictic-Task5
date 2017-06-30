@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -87,6 +84,30 @@ namespace SaleStatictic_Task5.Controllers
         [Authorize(Roles = "admin")]
         public ActionResult Create([Bind(Include = "Id,Date,ClientName,ManagerName,ProductName")] OrderViewModel orderViewModel)
         {
+            if (string.IsNullOrEmpty(orderViewModel.ProductName))
+            {
+                ModelState.AddModelError("ProductName", "Ваедите название товара");
+            }
+            else if (orderViewModel.ProductName.Length < 3)
+            {
+                ModelState.AddModelError("ProductName", "Недопустимая длина строки");
+            }
+            else if (string.IsNullOrEmpty(orderViewModel.ClientName))
+            {
+                ModelState.AddModelError("ClientName", "Введите имя клиента");
+            }
+            else if (orderViewModel.ClientName.Length < 3)
+            {
+                ModelState.AddModelError("ClientName", "Недопустимая длина строки");
+            }
+            else if (string.IsNullOrEmpty(orderViewModel.ManagerName))
+            {
+                ModelState.AddModelError("ManagerName", "Введите имя менеджера");
+            }
+            else if (orderViewModel.ManagerName.Length < 3)
+            {
+                ModelState.AddModelError("ManagerName", "Недопустимая длина строки");
+            }
             if (ModelState.IsValid)
             {
                 try
@@ -131,12 +152,43 @@ namespace SaleStatictic_Task5.Controllers
         [Authorize(Roles = "admin")]
         public ActionResult Edit([Bind(Include = "Id,Date,ClientName,ManagerName,ProductName")] OrderViewModel orderViewModel)
         {
+            if (string.IsNullOrEmpty(orderViewModel.ProductName))
+            {
+                ModelState.AddModelError("ProductName", "Ваедите название товара");
+            }
+            else if (orderViewModel.ProductName.Length < 3)
+            {
+                ModelState.AddModelError("ProductName", "Недопустимая длина строки");
+            }
+            else if (string.IsNullOrEmpty(orderViewModel.ClientName))
+            {
+                ModelState.AddModelError("ClientName", "Введите имя клиента");
+            }
+            else if (orderViewModel.ClientName.Length < 3)
+            {
+                ModelState.AddModelError("ClientName", "Недопустимая длина строки");
+            }
+            else if (string.IsNullOrEmpty(orderViewModel.ManagerName))
+            {
+                ModelState.AddModelError("ManagerName", "Введите имя менеджера");
+            }
+            else if (orderViewModel.ManagerName.Length < 3)
+            {
+                ModelState.AddModelError("ManagerName", "Недопустимая длина строки");
+            }
             if (ModelState.IsValid)
             {
-                Mapper.Initialize(cfg => cfg.CreateMap<OrderViewModel, OrderDTO>());
-                var order = Mapper.Map<OrderViewModel, OrderDTO>(orderViewModel);
-                _orderService.Update(order);
-                return RedirectToAction("Index");
+                try
+                {
+                    Mapper.Initialize(cfg => cfg.CreateMap<OrderViewModel, OrderDTO>());
+                    var order = Mapper.Map<OrderViewModel, OrderDTO>(orderViewModel);
+                    _orderService.Update(order);
+                    return RedirectToAction("Index");
+                }
+                catch (ValidationException ex)
+                {
+                    ModelState.AddModelError(ex.Property, ex.Message);
+                }
             }
             return View(orderViewModel);
         }
@@ -162,11 +214,11 @@ namespace SaleStatictic_Task5.Controllers
         [Authorize(Roles = "admin")]
         public ActionResult DeleteConfirmed(int id)
         {
-            OrderViewModel orderViewModel = GetAllOrderViewModels().FirstOrDefault(x => x.Id.Equals(id));
-            Mapper.Initialize(cfg => cfg.CreateMap<OrderViewModel, OrderDTO>());
-            var order = Mapper.Map<OrderViewModel, OrderDTO>(orderViewModel);
-            _orderService.DeleteOrder(order);
-            return RedirectToAction("Index");
+               OrderViewModel orderViewModel = GetAllOrderViewModels().FirstOrDefault(x => x.Id.Equals(id));
+                Mapper.Initialize(cfg => cfg.CreateMap<OrderViewModel, OrderDTO>());
+                var order = Mapper.Map<OrderViewModel, OrderDTO>(orderViewModel);
+                _orderService.DeleteOrder(order);
+                return RedirectToAction("Index");
         }
         protected override void Dispose(bool disposing)
         {

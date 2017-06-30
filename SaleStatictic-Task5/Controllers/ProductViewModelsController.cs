@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using AutoMapper;
 using BLL.DTO;
+using BLL.Infrastructure;
 using BLL.Interfaces;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -85,11 +86,15 @@ namespace SaleStatictic_Task5.Controllers
         {
             if (string.IsNullOrEmpty(productViewModel.ProductName))
             {
-                ModelState.AddModelError("ProductName", "Ваедите название товара");
+                ModelState.AddModelError("ProductName", "Поле должно быть заполнено");
             }
             else if (productViewModel.ProductName.Length < 3)
             {
                 ModelState.AddModelError("ProductName", "Недопустимая длина строки");
+            }
+            else if (productViewModel.ProductCost < (decimal)0.01)
+            {
+                ModelState.AddModelError("ProductCost", "Введите цену товара больше '0,01'");
             }
             if (ModelState.IsValid)
             {
@@ -98,7 +103,6 @@ namespace SaleStatictic_Task5.Controllers
                 _productService.AddProduct(product);
                 return RedirectToAction("Index");
             }
-            ViewBag.Message = "Запрос не прошел валидацию";
             return View(productViewModel);
         }
 
@@ -125,20 +129,31 @@ namespace SaleStatictic_Task5.Controllers
         [Authorize(Roles = "admin")]
         public ActionResult Edit([Bind(Include = "Id,ProductName,ProductCost")] ProductViewModel productViewModel)
         {
-            if (string.IsNullOrEmpty(productViewModel.ProductName))
+            if (string.IsNullOrEmpty(productViewModel.ProductName) )
             {
-                ModelState.AddModelError("ProductName", "Ваедите название товара");
+                ModelState.AddModelError("ProductName", "Поле должно быть заполнено");
             }
             else if (productViewModel.ProductName.Length < 3)
             {
                 ModelState.AddModelError("ProductName", "Недопустимая длина строки");
             }
+            else if (productViewModel.ProductCost < (decimal)0.01)
+            {
+                ModelState.AddModelError("ProductCost", "Введите цену товара больше '0,01'");
+            }
             if (ModelState.IsValid)
             {
-                Mapper.Initialize(cfg => cfg.CreateMap<ProductViewModel, ProductDTO>());
-                var product = Mapper.Map<ProductViewModel, ProductDTO>(productViewModel);
-                _productService.UpdateProduct(product);
-                return RedirectToAction("Index");
+                try
+                {
+                    Mapper.Initialize(cfg => cfg.CreateMap<ProductViewModel, ProductDTO>());
+                    var product = Mapper.Map<ProductViewModel, ProductDTO>(productViewModel);
+                    _productService.UpdateProduct(product);
+                    return RedirectToAction("Index");
+                }
+                catch (ValidationException ex)
+                {
+                    ModelState.AddModelError(ex.Property, ex.Message);
+                }
             }
             return View(productViewModel);
         }

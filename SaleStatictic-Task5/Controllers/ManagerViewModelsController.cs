@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using AutoMapper;
 using BLL.DTO;
+using BLL.Infrastructure;
 using SaleStatictic_Task5.Models;
-using SaleStatictic_Task5.Models.ViewModels;
 using BLL.Interfaces;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -86,12 +83,27 @@ namespace SaleStatictic_Task5.Controllers
         [Authorize(Roles = "admin")]
         public ActionResult Create([Bind(Include = "Id,ManagerName")] ManagerViewModel managerViewModel)
         {
+            if (string.IsNullOrEmpty(managerViewModel.ManagerName))
+            {
+                ModelState.AddModelError("ManagerName", "Ваедите имя менеджера");
+            }
+            else if (managerViewModel.ManagerName.Length < 3)
+            {
+                ModelState.AddModelError("ManagerName", "Недопустимая длина строки");
+            }
             if (ModelState.IsValid)
             {
-                Mapper.Initialize(cfg => cfg.CreateMap<ManagerViewModel, ManagerDTO>());
-                var manager = Mapper.Map<ManagerViewModel, ManagerDTO>(managerViewModel);
-                _managerService.AddManager(manager);
-                return RedirectToAction("Index");
+                try
+                {
+                    Mapper.Initialize(cfg => cfg.CreateMap<ManagerViewModel, ManagerDTO>());
+                    var manager = Mapper.Map<ManagerViewModel, ManagerDTO>(managerViewModel);
+                    _managerService.AddManager(manager);
+                    return RedirectToAction("Index");
+                }
+                catch (ValidationException ex)
+                {
+                    ModelState.AddModelError(ex.Property, ex.Message);
+                }
             }
 
             return View(managerViewModel);
@@ -120,12 +132,27 @@ namespace SaleStatictic_Task5.Controllers
         [Authorize(Roles = "admin")]
         public ActionResult Edit([Bind(Include = "Id,ManagerName")] ManagerViewModel managerViewModel)
         {
+            if (string.IsNullOrEmpty(managerViewModel.ManagerName))
+            {
+                ModelState.AddModelError("ManagerName", "Ваедите имя менеджера");
+            }
+            else if (managerViewModel.ManagerName.Length < 3)
+            {
+                ModelState.AddModelError("ManagerName", "Недопустимая длина строки");
+            }
             if (ModelState.IsValid)
             {
-                Mapper.Initialize(cfg => cfg.CreateMap<ManagerViewModel, ManagerDTO>());
-                var manager = Mapper.Map<ManagerViewModel, ManagerDTO>(managerViewModel);
-                _managerService.UpdateManager(manager);
-                return RedirectToAction("Index");
+                try
+                {
+                    Mapper.Initialize(cfg => cfg.CreateMap<ManagerViewModel, ManagerDTO>());
+                    var manager = Mapper.Map<ManagerViewModel, ManagerDTO>(managerViewModel);
+                    _managerService.UpdateManager(manager);
+                    return RedirectToAction("Index");
+                }
+                catch (ValidationException ex)
+                {
+                    ModelState.AddModelError(ex.Property, ex.Message);
+                }
             }
             return View(managerViewModel);
         }

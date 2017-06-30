@@ -100,7 +100,7 @@ namespace BLL.Service
             var manager = DataBase.Managers.GetAll().FirstOrDefault(x => x.ManagerName == orderDto.ManagerName);
             var product = DataBase.Products.GetAll().FirstOrDefault(x => x.ProductName == orderDto.ProductName);
             var client = DataBase.Clients.GetAll().FirstOrDefault(x => x.ClientName == orderDto.ClientName);
-
+            
             if (manager == null)
             {
                 manager = Mapper.Map<OrderDTO, Manager>(orderDto);
