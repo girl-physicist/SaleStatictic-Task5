@@ -36,11 +36,6 @@ namespace BLL.Service
             var manager = DataBase.Managers.GetAll().FirstOrDefault(x => x.ManagerName == orderDto.ManagerName);
             var product = DataBase.Products.GetAll().FirstOrDefault(x => x.ProductName == orderDto.ProductName);
             var client = DataBase.Clients.GetAll().FirstOrDefault(x => x.ClientName == orderDto.ClientName);
-
-            if (product == null)
-            {
-                throw new ValidationException("Товар не найден!", "");
-            }
             if (client == null)
             {
                 client = Mapper.Map<OrderDTO, Client>(orderDto);
@@ -48,8 +43,11 @@ namespace BLL.Service
             }
             if (manager == null)
             {
-                manager = Mapper.Map<OrderDTO, Manager>(orderDto);
-                DataBase.Managers.Create(manager);
+                throw new ValidationException("Менеджер не найден!", "");
+            }
+            if (product == null)
+            {
+                throw new ValidationException("Товар не найден!", "");
             }
             order.Product = product;
             order.Client = client;

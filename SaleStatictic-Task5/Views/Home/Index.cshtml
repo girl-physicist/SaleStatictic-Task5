@@ -1,6 +1,10 @@
 ﻿@{
     ViewBag.Title = "Home Page";
 }
+@if (ViewBag.Role == "admin")
+{
+    <p>@Html.ActionLink("Открыть панель администратора", "Index","Admin")</p>
+}
 <div id="chart_div">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
@@ -72,13 +76,12 @@
     <p>@Html.ActionLink("Показать заказы", "Index", "OrderViewModels", null, new { id = "showOrders" })</p>
     <p>@Html.ActionLink("Показать менеджеров", "Index", "ManagerViewModels", null, new { id = "showManagers" })</p>
     <p>@Html.ActionLink("Показать товары", "Index", "ProductViewModels", null, new { id = "showProducts" })</p>
-    @using (Ajax.BeginForm("Filter", new AjaxOptions { UpdateTargetId = "Show" }))
-    {
-        <input type="submit" value="Перейти на форму фильтрации заказов" />
-    }
+    <p>@Html.ActionLink("Перейти на форму фильтрации заказов", "Filter")</p>
+  
+  
     <div id="Show"></div>
 </div>
-@Scripts.Render("~/scripts/jquery-1.10.2.min.js")
+
 @Scripts.Render("~/scripts/jquery.unobtrusive-ajax.min.js")
 
 

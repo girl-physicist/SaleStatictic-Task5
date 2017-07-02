@@ -179,8 +179,17 @@ namespace SaleStatictic_Task5.Controllers
             ClientViewModel clientViewModel = GetAllClientViewModels().FirstOrDefault(x => x.Id.Equals(id));
             Mapper.Initialize(cfg => cfg.CreateMap<ClientViewModel, ClientDTO>());
             var client = Mapper.Map<ClientViewModel, ClientDTO>(clientViewModel);
-            _clientService.RemoveClient(client);
-            return RedirectToAction("Index");
+            try
+            {
+                _clientService.RemoveClient(client);
+                return RedirectToAction("Index");
+            }
+            catch (ValidationException ex)
+            {
+                ModelState.AddModelError(ex.Property, ex.Message);
+                return View();
+            }
+            
         }
         protected override void Dispose(bool disposing)
         {

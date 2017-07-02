@@ -24,9 +24,18 @@ namespace SaleStatictic_Task5.Controllers
         }
        
         [HttpGet]
-        public ActionResult Delete()
+        public ActionResult Delete(string id)
         {
-            return View();
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            ApplicationUser user = UserManager.Users.First(x => x.Id == id);
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+            return View(user);
         }
         [HttpPost]
         [ActionName("Delete")]

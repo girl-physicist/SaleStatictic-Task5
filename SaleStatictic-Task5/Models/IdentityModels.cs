@@ -27,6 +27,5 @@ namespace SaleStatictic_Task5.Models
         {
             return new ApplicationDbContext();
         }
-
     }
 }
