@@ -1,0 +1,89 @@
+﻿@model SaleStatictic_Task5.Models.ApplicationUser
+
+<div>
+    <h4>Details</h4>
+    <hr />
+    <table class="table">
+        <tr>
+            <th>
+                Role
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EmailConfirmed)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PasswordHash)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SecurityStamp)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PhoneNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PhoneNumberConfirmed)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TwoFactorEnabled)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LockoutEndDateUtc)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LockoutEnabled)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AccessFailedCount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserName)
+            </th>
+        </tr>
+
+      
+            <tr>
+                <td>
+                    @ViewBag.Role 
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.EmailConfirmed)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.PasswordHash)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.SecurityStamp)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.PhoneNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.PhoneNumberConfirmed)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.TwoFactorEnabled)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.LockoutEndDateUtc)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.LockoutEnabled)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.AccessFailedCount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => modelItem.UserName)
+                </td>
+               </tr>
+    </table>
+</div>
+<p>
+    @Html.ActionLink("Back to List", "Index","Admin")
+</p>

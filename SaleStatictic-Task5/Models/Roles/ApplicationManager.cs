@@ -5,17 +5,17 @@ using Microsoft.Owin;
 
 namespace SaleStatictic_Task5.Models.Roles
 {
-    public class ApplicationManager: UserManager<ApplicationUser>
+    public class ApplicationManager/*: UserManager<ApplicationUser>*/
     {
-    public ApplicationManager(IUserStore<ApplicationUser> store) : base(store)
-    {
-    }
-    public static ApplicationManager Create(IdentityFactoryOptions<ApplicationManager> options,
-        IOwinContext context)
-    {
-        ApplicationDbContext db = context.Get<ApplicationDbContext>();
-        ApplicationManager manager = new ApplicationManager(new UserStore<ApplicationUser>(db));
-        return manager;
-    }
+    //public ApplicationManager(IUserStore<ApplicationUser> store) : base(store)
+    //{
+    //}
+    //public static ApplicationManager Create(IdentityFactoryOptions<ApplicationManager> options,
+    //    IOwinContext context)
+    //{
+    //    ApplicationDbContext db = context.Get<ApplicationDbContext>();
+    //    ApplicationManager manager = new ApplicationManager(new UserStore<ApplicationUser>(db));
+    //    return manager;
+    //}
     }
 }

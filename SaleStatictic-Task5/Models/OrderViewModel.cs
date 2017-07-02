@@ -8,10 +8,10 @@ namespace SaleStatictic_Task5.Models
     {
         [HiddenInput(DisplayValue = false)]
         public int Id { get; set; }
-
+       
         [Required(ErrorMessage = "Введите дату")]
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:dd'/'MM'/'yyyy}"/*, ApplyFormatInEditMode = true*/)]
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "{0:dd'/'MM'/'yyyy}", ApplyFormatInEditMode = true)]
         [Display (Name = "Дата")]
         public DateTime Date { get; set; }
         

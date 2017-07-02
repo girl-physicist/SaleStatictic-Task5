@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -82,7 +83,7 @@ namespace SaleStatictic_Task5.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "admin")]
-        public ActionResult Create([Bind(Include = "Id,Date,ClientName,ManagerName,ProductName")] OrderViewModel orderViewModel)
+        public ActionResult Create([Bind(Include = "Id,ClientName,ManagerName,ProductName")] OrderViewModel orderViewModel)
         {
             if (string.IsNullOrEmpty(orderViewModel.ProductName))
             {
@@ -117,7 +118,7 @@ namespace SaleStatictic_Task5.Controllers
                         ClientName = orderViewModel.ClientName,
                         ManagerName = orderViewModel.ManagerName,
                         ProductName = orderViewModel.ProductName,
-                        Date = orderViewModel.Date
+                        Date = DateTime.Now
                     };
                     _orderService.MakeOrder(orderDto);
                     return RedirectToAction("Index");
@@ -150,7 +151,7 @@ namespace SaleStatictic_Task5.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "admin")]
-        public ActionResult Edit([Bind(Include = "Id,Date,ClientName,ManagerName,ProductName")] OrderViewModel orderViewModel)
+        public ActionResult Edit([Bind(Include = "Id,ClientName,ManagerName,ProductName")] OrderViewModel orderViewModel)
         {
             if (string.IsNullOrEmpty(orderViewModel.ProductName))
             {
@@ -182,6 +183,7 @@ namespace SaleStatictic_Task5.Controllers
                 {
                     Mapper.Initialize(cfg => cfg.CreateMap<OrderViewModel, OrderDTO>());
                     var order = Mapper.Map<OrderViewModel, OrderDTO>(orderViewModel);
+                    order.Date=DateTime.Now;
                     _orderService.Update(order);
                     return RedirectToAction("Index");
                 }

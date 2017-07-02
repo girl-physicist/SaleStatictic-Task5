@@ -12,7 +12,6 @@ namespace SaleStatictic_Task5.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        private readonly ApplicationDbContext _dbContext = new ApplicationDbContext();
         private readonly IOrderService _orderService;
        
         public HomeController(IOrderService orderService)
@@ -63,7 +62,6 @@ namespace SaleStatictic_Task5.Controllers
                 Clients = new SelectList(clients),
                 Dates = new SelectList(dates)
             };
-
             return PartialView(saleInfoViewModel);
         }
         public IEnumerable<ChartData> GetChartData()
@@ -86,7 +84,6 @@ namespace SaleStatictic_Task5.Controllers
         
         protected override void Dispose(bool disposing)
         {
-            _dbContext.Dispose();
             _orderService.Dispose();
             base.Dispose(disposing);
         }

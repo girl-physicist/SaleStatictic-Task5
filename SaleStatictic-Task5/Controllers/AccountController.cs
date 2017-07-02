@@ -157,7 +157,7 @@ namespace SaleStatictic_Task5.Controllers
                 {
                     // если создание прошло успешно, то добавляем роль пользователя
                     await UserManager.AddToRoleAsync(user.Id, "user");
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+                   // await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Отправка сообщения электронной почты с этой ссылкой
@@ -404,7 +404,6 @@ namespace SaleStatictic_Task5.Controllers
         {
             return View();
         }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)
